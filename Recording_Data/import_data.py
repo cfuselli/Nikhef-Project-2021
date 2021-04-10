@@ -17,8 +17,9 @@ import socket
 import multiprocessing
 import math
 import random
-import thread
-import serial 
+#import thread
+import threading # see if this works for py3.9
+import serial #doubled...
 
 '''
 This is a Websocket server that forwards signals from the detector to any client connected.
@@ -62,7 +63,7 @@ class DataCollectionProcess(multiprocessing.Process):
         return -math.log(1.0 - random.random()) / rate
 
 def RUN(bg):
-    print 'Running...'
+    print('Running...')
     while True:
         data = bg.comport.readline()
         bg.queue.put(str(datetime.now())+" "+data)
@@ -73,12 +74,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.sending = False
 
     def open(self):
-        print 'New connection opened from ' + self.request.remote_ip
+        print('New connection opened from ' + self.request.remote_ip)
         clients.append(self)
-        print '%d clients connected' % len(clients)
+        print('%d clients connected' % len(clients))
       
     def on_message(self, message):
-        print 'message received:  %s' % message
+        print('message received:  %s' % message)
         if message == 'StartData':
             self.sending = True
         if message == 'StopData':
@@ -87,8 +88,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         self.sending = False
         clients.remove(self)
-        print 'Connection closed from ' + self.request.remote_ip
-        print '%d clients connected' % len(clients)
+        print('Connection closed from ' + self.request.remote_ip)
+        print('%d clients connected' % len(clients))
  
     def check_origin(self, origin):
         return True
@@ -148,7 +149,8 @@ print("[3] Remove files from SD card")
 print("[4] Connect to server: www.cosmicwatch.lns.mit.edu")
 print("[h] Help")
 
-mode = str(raw_input("\nSelected operation: "))
+#mode = str(raw_input("\nSelected operation: ")) 
+mode = str(input("\nSelected operation: ")) # change to py3
 
 if mode == 'h':
     print_help1()
@@ -402,8 +404,8 @@ if mode == 4:
     port = 9090
     http_server.listen(port)
     myIP = socket.gethostbyname(socket.gethostname())
-    print 'CosmicWatch detector server started at %s:%d' % (myIP, port)
-    print 'You can now connect to your device using http://cosmicwatch.lns.mit.edu/'
+    print('CosmicWatch detector server started at %s:%d' % (myIP, port))
+    print('You can now connect to your device using http://cosmicwatch.lns.mit.edu/')
     mainLoop = tornado.ioloop.IOLoop.instance()
     #in the main loop fire queue check each 100ms
     try:
