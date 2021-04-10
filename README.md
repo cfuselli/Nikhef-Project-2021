@@ -5,5 +5,4 @@ This is the main shared repo for the course Nikhef Project 2021 at UvA.
 
 Please insert your name for the commit & pull request
 
-
-Florian Haslbeck 
+Flo was here...
