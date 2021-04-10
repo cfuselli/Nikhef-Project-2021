@@ -1,4 +1,4 @@
-import serial 
+import serial # make sure to pip3 install pyserial (NOT pip3 install serial !)
 import time
 import glob
 import sys
@@ -17,9 +17,8 @@ import socket
 import multiprocessing
 import math
 import random
-#import thread
-import threading # see if this works for py3.9
-import serial #doubled...
+import _thread as thread # instead of import thread in python3
+from serial import Serial
 
 '''
 This is a Websocket server that forwards signals from the detector to any client connected.
@@ -149,7 +148,7 @@ print("[3] Remove files from SD card")
 print("[4] Connect to server: www.cosmicwatch.lns.mit.edu")
 print("[h] Help")
 
-#mode = str(raw_input("\nSelected operation: ")) 
+#mode = str(input("\nSelected operation: ")) 
 mode = str(input("\nSelected operation: ")) # change to py3
 
 if mode == 'h':
@@ -171,7 +170,7 @@ for i in range(len(port_list)):
     print('['+str(i+1)+'] ' + str(port_list[i]))
 print('[h] help\n')
 
-ArduinoPort = raw_input("Selected Arduino port: ")
+ArduinoPort = input("Selected Arduino port: ")
 
 ArduinoPort = ArduinoPort.split(',')
 nDetectors = len(ArduinoPort)
@@ -200,7 +199,7 @@ for i in range(nDetectors):
 
 if mode == 1:
 	cwd = os.getcwd()
-	fname = raw_input("Enter file name (default: "+cwd+"/CW_data.txt):")
+	fname = input("Enter file name (default: "+cwd+"/CW_data.txt):")
 
 	detector_name_list = []
 	
@@ -299,7 +298,7 @@ if mode == 1:
 if mode == 2:
 	
 	cwd = os.getcwd()
-	dir_path = raw_input("\nEnter location to save SD data (default: "+cwd+"/SDFiles):")
+	dir_path = input("\nEnter location to save SD data (default: "+cwd+"/SDFiles):")
 	if dir_path == '':
 		dir_path = cwd+"/SDFiles"
 	
@@ -356,7 +355,7 @@ if mode == 2:
 
 if mode == 3:
     print("\nAre you sure that you want to remove all files from SD card?")
-    ans = raw_input("Type y or n: ")
+    ans = input("Type y or n: ")
     if ans == 'y' or ans == 'yes' or ans == 'Y' or ans == 'YES':
         signal.signal(signal.SIGINT, signal_handler)
         ComPort = serial.Serial(port_name_list[0]) # open the COM Port
