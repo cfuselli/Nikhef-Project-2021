@@ -7,3 +7,5 @@ Please insert your name and a commit handle for the commit & pull request.
 flo @haslbeck -fh
 
 carlo @cfuselli -cf
+
+noor @NoorKosterUvA -nk
