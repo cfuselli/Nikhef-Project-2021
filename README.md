@@ -19,3 +19,7 @@ mattia @MattiaBosc -mb
 rens @Rensoud -ro
 
 niels @nielsruijter -nr
+
+oline @olineranum -or
+
+marta @MartaStentella - ms
