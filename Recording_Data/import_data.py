@@ -313,64 +313,63 @@ if mode == 1:
     file.close()  
 
 if mode == 2:
-	
-	cwd = os.getcwd()
-	dir_path = input("\nEnter location to save SD data (default: "+cwd+"/SDFiles):")
-	if dir_path == '':
-		dir_path = cwd+"/SDFiles"
-	
-	if not os.path.exists(dir_path):
-		os.makedirs(dir_path)
+    cwd = os.getcwd()
+    dir_path = input("\nEnter location to save SD data (default: "+cwd+"/SDFiles):")
+    
+    if dir_path == '': dir_path = cwd+"/SDFiles"
+    if not os.path.exists(dir_path): os.makedirs(dir_path)
 
 
-	signal.signal(signal.SIGINT, signal_handler)
-	ComPort = serial.Serial(port_name_list[0]) # open the COM Port
-	ComPort.baudrate = 9600            # set Baud rate
-	ComPort.bytesize = 8               # Number of data bits = 8
-	ComPort.parity   = 'N'             # No parity
-	ComPort.stopbits = 1 
-
-	if ComPort.readline().strip() == 'CosmicWatchDetector':
-		time.sleep(1)
-		detector_name = ComPort.readline()
-		
-		print('\n-- Detector Name --')
-		print(detector_name)
-
-		ComPort.write("read") 
-		counter = 0
-
-
-		while True:
-			data = ComPort.readline()    # Wait and read data 
-			#print(data)
-			if 'Done' in data:
-			    ComPort.close() 
-			    sys.exit() 
-			elif 'opening:' in data:
-			    fname = dir_path + '/' + data.split(' ')[-1].split('.txt')[0]+'.txt'
-			    
-			    print("Saving to: "+ fname)
-			    file = open(fname, "w",0)
-			    counter = 0
-
-
-			elif 'EOF' in data:
-			    file.close() 
-
-			else:
-			    file.write(data)
-			    counter +=1
+    signal.signal(signal.SIGINT, signal_handler)
+    ComPort = serial.Serial(port_name_list[0]) # open the COM Port
+    ComPort.baudrate = 9600            # set Baud rate
+    ComPort.bytesize = 8               # Number of data bits = 8
+    ComPort.parity   = 'N'             # No parity
+    ComPort.stopbits = 1 
    
-	else:
-		print('--- Error ---')
-		print('You are trying to read from the SD card.')
-		print('Have you uploaded SDCard.ino to the Arduino?')
-		print('Is there a microSD card inserted into the detector?')
-		print('Exiting ...')
-		sys.exit()
+    
+    if ComPort.readline().strip() == b'CosmicWatchDetector':
+        time.sleep(1)
+        detector_name = ComPort.readline()
+
+        print('\n-- Detector Name --') # TODO print out detector name (if someone is bored)
+        ComPort.write(b"read") 
+        line_counter, data_counter = 0, 0
+ 
+        while True:
+            
+            data = ComPort.readline() # read data
+            data = data.decode('utf-8',errors='ignore') # decode the byte literal to utf-9 str, ignore errors
+            
+            if 'Done' in data:
+                ComPort.close() 
+                sys.exit()
+                
+            elif 'opening:' in data:
+                fname = dir_path + '/' + (data.split(' ')[-1].split('.txt')[0]) +'.txt' 
+                file = open(fname, "w") # py3
+                line_counter, data_counter = 0, 0
+
+            elif 'EOF' in data:
+                print("Close %s.\nWritten\nlines    %i\nreadings %i"%(fname,line_counter,data_counter))
+                file.close() 
+
+            else:
+                file.write(data)
+                line_counter +=1
+                if data[0]!='#' and data[0]!='D': data_counter +=1
+   
+    else:
+        print('--- Error ---')
+        print('You are trying to read from the SD card.')
+        print('Have you uploaded SDCard.ino to the Arduino?')
+        print('Is there a microSD card inserted into the detector?')
+        print('Exiting ...')
+        sys.exit()
 
 if mode == 3:
+    """ delete all files from sd card """
+
     print("\nAre you sure that you want to remove all files from SD card?")
     ans = input("Type y or n: ")
     if ans == 'y' or ans == 'yes' or ans == 'Y' or ans == 'YES':
@@ -381,13 +380,13 @@ if mode == 3:
         ComPort.parity   = 'N'           # No parity
         ComPort.stopbits = 1 
 
-        if ComPort.readline().strip() == 'CosmicWatchDetector':
+        if ComPort.readline().strip() == b'CosmicWatchDetector':
             time.sleep(1)
-            ComPort.write("remove")   
+            ComPort.write(b"remove")   
             while True:
                 data = ComPort.readline()    # Wait and read data 
-                print(data)
-                if data == 'Done...\r\n':
+                print(data.decode('utf-8'))
+                if data == b'Done...\r\n':
                     print("Finished deleting files.")
                     break
                     
