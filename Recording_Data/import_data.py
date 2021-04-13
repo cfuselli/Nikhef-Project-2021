@@ -103,10 +103,11 @@ def checkQueue():
  
 
 def signal_handler(signal, frame):
-        print('You pressed Ctrl+C!')
-        ComPort.close()     
-        file.close() 
-        sys.exit(0)
+    print('You pressed Ctrl+C!')
+    ComPort.close() # TODO throws error message: has no .close()
+    file.close() 
+    sys.exit(0)
+    
 def serial_ports():
     """ Lists serial port names
 
@@ -156,12 +157,12 @@ if mode == 'h':
     sys.exit()
 
 else:
-	mode = int(mode)
-	if mode not in [1,2,3,4]:
-		print('-- Error --')
-		print('Invalid selection')
-		print('Exiting...')
-		sys.exit()
+    mode = int(mode)
+    if mode not in [1,2,3,4]:
+        print('-- Error --')
+        print('Invalid selection')
+        print('Exiting...')
+        sys.exit()
 
 port_list = serial_ports()
 
@@ -176,17 +177,17 @@ ArduinoPort = ArduinoPort.split(',')
 nDetectors = len(ArduinoPort)
 
 if mode in [2,3,4]:
-	if len(ArduinoPort) > 1:
-		print('--- Error ---')
-		print('You selected multiple detectors.')
-		print('This options is only compatible when recording to the computer.')
-		print('Exiting...')
-		sys.exit()
+    if len(ArduinoPort) > 1:
+        print('--- Error ---')
+        print('You selected multiple detectors.')
+        print('This options is only compatible when recording to the computer.')
+        print('Exiting...')
+        sys.exit()
 
 port_name_list = []
 
 for i in range(len(ArduinoPort)):
-	port_name_list.append(str(port_list[int(ArduinoPort[i])-1]))
+    port_name_list.append(str(port_list[int(ArduinoPort[i])-1]))
 
 if ArduinoPort == 'h':
     print_help1()
@@ -194,106 +195,122 @@ if ArduinoPort == 'h':
 
 print("The selected port(s) is(are): ")
 for i in range(nDetectors):	 
-	print('\t['+str(ArduinoPort[i])+']' +port_name_list[i])
+    print('\t['+str(ArduinoPort[i])+']' +port_name_list[i])
 
 
 if mode == 1:
-	cwd = os.getcwd()
-	fname = input("Enter file name (default: "+cwd+"/CW_data.txt):")
+    cwd = os.getcwd()
+    fname = input("Enter file name (default: "+cwd+"/CW_data.txt):")
 
-	detector_name_list = []
-	
-	if fname == '':
-	    fname = cwd+"/CW_data.txt"
+    detector_name_list = []
 
-	print('Saving data to: '+fname)
+    if fname == '':
+        fname = cwd+"/CW_data.txt"
+    
+    # TODO: add .txt automatically
 
-	ComPort_list = np.ones(nDetectors)
-	for i in range(nDetectors):
-		signal.signal(signal.SIGINT, signal_handler)
-		globals()['Det%s' % str(i)] = serial.Serial(str(port_name_list[i]))
-		globals()['Det%s' % str(i)].baudrate = 9600    
-		globals()['Det%s' % str(i)].bytesize = 8             # Number of data bits = 8
-		globals()['Det%s' % str(i)].parity   = 'N'           # No parity
-		globals()['Det%s' % str(i)].stopbits = 1 
+    print('Saving data to: '+fname)
 
-		time.sleep(1)
-		#globals()['Det%s' % str(i)].write('write')  
+    ComPort_list = np.ones(nDetectors)
+    for i in range(nDetectors):
+        signal.signal(signal.SIGINT, signal_handler)
+        globals()['Det%s' % str(i)] = serial.Serial(str(port_name_list[i]))
+        globals()['Det%s' % str(i)].baudrate = 9600    
+        globals()['Det%s' % str(i)].bytesize = 8             # Number of data bits = 8
+        globals()['Det%s' % str(i)].parity   = 'N'           # No parity
+        globals()['Det%s' % str(i)].stopbits = 1 
 
-		counter = 0
+        time.sleep(1)
+        #globals()['Det%s' % str(i)].write('write')  
 
-		header1 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
-		if 'SD initialization failed' in header1:
-			print('...SDCard.ino detected.')
-			print('...SDcard initialization failed.')
-			# This happens if the SDCard.ino is uploaded but it doesn't see an sdcard.
-			header1a = globals()['Det%s' % str(i)].readline()
-			header1 = globals()['Det%s' % str(i)].readline()
-		if 'CosmicWatchDetector' in header1:
-			print('...SDCard.ino code detected.')
-			print('...SDcard intialized correctly.')
-			# This happens if the SDCar.ino is uploaded and it sees an sdcard.
-			header1a = globals()['Det%s' % str(i)].readline()
-			globals()['Det%s' % str(i)].write('write') 
-			header1b = globals()['Det%s' % str(i)].readline()
-			header1 = globals()['Det%s' % str(i)].readline()
-			#header1 = globals()['Det%s' % str(i)].readline()
-		header2 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
-		header3 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
-		header4 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
-		header5 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+        counter = 0
 
-		det_name = globals()['Det%s' % str(i)].readline().replace('\r\n','')
-		#print(det_name)
-		if 'Device ID: ' in det_name:
-			det_name = det_name.split('Device ID: ')[-1]
-		detector_name_list.append(det_name)    # Wait and read data 
+        header1 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+        #if 'SD initialization failed' in header1:
+        if b'SD initialization failed' in header1: # header is a byte literal
+            print('...SDCard.ino detected.')
+            print('...SDcard initialization failed.')
+            # This happens if the SDCard.ino is uploaded but it doesn't see an sdcard.
+            header1a = globals()['Det%s' % str(i)].readline()
+            header1 = globals()['Det%s' % str(i)].readline()
+        #if 'CosmicWatchDetector' in header1:
+        if b'CosmicWatchDetector' in header1:
+            print('...SDCard.ino code detected.')
+            print('...SDcard intialized correctly.')
+            # This happens if the SDCar.ino is uploaded and it sees an sdcard.
+            header1a = globals()['Det%s' % str(i)].readline()
+            globals()['Det%s' % str(i)].write('write') 
+            header1b = globals()['Det%s' % str(i)].readline()
+            header1 = globals()['Det%s' % str(i)].readline()
+            #header1 = globals()['Det%s' % str(i)].readline()
+        header2 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+        header3 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+        header4 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+        header5 = globals()['Det%s' % str(i)].readline()     # Wait and read data 
+
+        #det_name = globals()['Det%s' % str(i)].readline().replace('\r\n','')
+        det_name = globals()['Det%s' % str(i)].readline().replace(b'\r\n',b'') # change to byte literal
+        #print(det_name)
+        #if 'Device ID: ' in det_name:
+        if b'Device ID: ' in det_name:
+            det_name = det_name.split('Device ID: ')[-1]
+        detector_name_list.append(det_name)    # Wait and read data 
 
 
-	file = open(fname, "w",0)
-	file.write(header1)
-	file.write(header2)
-	file.write(header3)
-	file.write(header4)
-	file.write(header5)
+    #file = open(fname, "w",0)
+    file = open(fname, "wt") # py3
+    file.write(header1.decode('utf-8'))
+    file.write(header2.decode('utf-8'))
+    file.write(header3.decode('utf-8'))
+    file.write(header4.decode('utf-8'))
+    file.write(header5.decode('utf-8'))
 
-	string_of_names = ''
-	print("\n-- Detector Names --")
-	#print(detector_name_list)
-	for i in range(len(detector_name_list)):
-		print(detector_name_list[i])
-		if '\xff' in detector_name_list[i] or '?' in detector_name_list[i] :
-			print('--- Error ---')
-			print('You should name your CosmicWatch Detector first.')
-			print('Simply change the DetName variable in the Naming.ino script,')
-			print('and upload the code to your Arduino.')
-			print('Exiting ...')
+    string_of_names = ''
+    print("\n-- Detector Names --")
+    #print(detector_name_list)
+    for i in range(len(detector_name_list)):
+        print(detector_name_list[i].decode('utf-8'))
+        if b'\xff' in detector_name_list[i] or b'?' in detector_name_list[i] :
+            print('--- Error ---')
+            print('You should name your CosmicWatch Detector first.')
+            print('Simply change the DetName variable in the Naming.ino script,')
+            print('and upload the code to your Arduino.')
+            print('Exiting ...')
 
-	print("\nTaking data ...")
-	print("Press ctl+c to terminate process")
+    print("\nTaking data ...")
+    print("Press ctl+c to terminate process")
 
-	if nDetectors>1:
-		for i in range(nDetectors):
-			string_of_names += detector_name_list[i] +', '
-	else:
-		string_of_names+=detector_name_list[0]
+    if nDetectors>1:
+        for i in range(nDetectors):
+            string_of_names += detector_name_list[i].decode('utf-8') +', '
+    else:
+        string_of_names+=detector_name_list[0].decode('utf-8')
 
-	#print(string_of_names)
-	file.write('Device ID(s): '+string_of_names)
-	file.write('\n')
-	#detector_name = ComPort.readline()    # Wait and read data 
-	#file.write("Device ID: "+str(detector_name))
+    #print(string_of_names)
+    file.write('Device ID(s): '+string_of_names)
+    file.write('\n')
+    file.flush()
+    #detector_name = ComPort.readline()    # Wait and read data 
+    #file.write("Device ID: "+str(detector_name))
 
-	while True:
-		for i in range(nDetectors):
-			if globals()['Det%s' % str(i)].inWaiting():
-				data = globals()['Det%s' % str(i)].readline().replace('\r\n','')    # Wait and read data 
-				file.write(str(datetime.now())+" "+data+" "+detector_name_list[i]+'\n')
-				globals()['Det%s' % str(i)].write('got-it') 
-
-	for i in range(nDetectors):
-		globals()['Det%s' % str(i)].close()     
-	file.close()  
+    while True:
+        for i in range(nDetectors):
+            if globals()['Det%s' % str(i)].inWaiting():
+                data = globals()['Det%s' % str(i)].readline().replace(b'\r\n',b'')    # Wait and read data
+                data = data.decode('utf-8')
+                datawrite = str(datetime.now())+" "+data+" "+detector_name_list[i].decode('utf-8')+'\n'
+                file.write(datawrite)
+                file.flush()
+                print(data)
+                print(datawrite)
+                # plt.scatter(datetime.now(), 100, s=20) # what is carlo doing here?
+                # plt.pause(0.0005)
+                globals()['Det%s' % str(i)].write(b'got-it')
+                pass
+            pass
+    for i in range(nDetectors):
+        globals()['Det%s' % str(i)].close()     
+    file.close()  
 
 if mode == 2:
 	
@@ -373,6 +390,8 @@ if mode == 3:
                 if data == 'Done...\r\n':
                     print("Finished deleting files.")
                     break
+                    
+                    
             ComPort.close()     
             sys.exit()
 
