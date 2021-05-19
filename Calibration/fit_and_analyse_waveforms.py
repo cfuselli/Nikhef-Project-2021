@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 fname = args.f
 
-
+plt.close('all')
 
  
 def get_data(fname):
@@ -84,22 +84,23 @@ def plot_signal(xdata, ydata):
 def analysis(lambdas,lambda_errs, ampl, ampl_errs):
     """ Plot histogram of lambdas
         Plot lambda vs peak voltage to check for correlations"""
-        
+    
     l, lerrs = np.array(lambdas), np.array(lambda_errs)
     a, aerrs = np.array(ampl), np.array(ampl_errs)
-    
+    lerr_mean = sum(i*i for i in lerrs)
+
     plt.figure()
     plt.hist(l,bins=10,label='mean %.3e'%l.mean())
     plt.ylabel('Entries')
     plt.xlabel(r'$\lambda$')
     
     plt.figure()
-    plt.scatter(a,l)
+    plt.errorbar(a,l, xerr=aerrs, yerr=lerrs,fmt='o')
     plt.ylim(0.0025, 0.0050)
     plt.ylabel(r'$\lambda$')
     plt.xlabel('V')
     
-    print(r'The mean lambda is: ' , l.mean())# , r' +/- ')
+    print(r'The mean lambda is: ' , l.mean() , r' +/- ', lerr_mean)
     return l.mean()
 
 def plot_multiple_waves(fpath, number_of_measurements=21, PLOT=False, Analysis=True, filename = 'lambdas.txt' ):
