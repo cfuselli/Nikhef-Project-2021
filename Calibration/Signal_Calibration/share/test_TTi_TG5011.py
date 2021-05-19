@@ -13,24 +13,23 @@ t.setVerbose(True)
 #t.init()
 print('set waveform')
 tstart = time.time()
-t.setArbWaveform('ARB2')
+#t.setArbWaveform('ARB2')
 input("press any key")
 print(tstart-time.time())
 
 
 #t.setWaveType('PULSE')
-#t.setPeriod(2)
 #t.setFrequency(1123e-3)
-#print("set PULSE")
+print("set PULSE")
 #t.setWaveType('PULSE')
 
-#print("set SINE")
-#t.setWaveType('SINE')
-#t.enableOutput('OFF')
+print("set SINE")
+t.setWaveType('SINE')
+t.enableOutput('OFF')
 #t.setOutputLoad(55)
 
 print("going in the loop")
-'''
+
 for i in range(1,3):
     tstart = time.time()
     v = i/10
@@ -47,7 +46,7 @@ for i in range(1,3):
     #    t.setWaveType('SINE')
     input("press any key")
     print(tstart-time.time())
-'''
+
 
 #print("get model")
 #print(t.getModel())
