@@ -22,7 +22,8 @@ class TTi_TG5011:
     def __del__(self):
         self.enableOutput('OFF')
         print('Deconstructor disabled output. Goodbye.')
-        
+
+
     def setVerbose(self, enable):
         self.sc.setVerbose(enable)
     
@@ -75,6 +76,18 @@ class TTi_TG5011:
             print("%i out of range [1,10000] Ohm")
             return False      
     
+    def syncType(self, synctype):
+        """ set the sync output type """
+        types = ['AUTO', 'CARRIER', 'MODULATION', 'SWEEP', 'BURST', 'TRIGGER']
+        if synctype not in types:
+            print("%s not available in %s"%(synctype,types))
+            return False
+        self.sc.write("SYNCTYPE %s"%synctype)
+
+    def syncOut(self, output):
+        """ set sync output ON or OFF """
+        self.sc.write("SYNCOUT %s"%output)
+
 
     """ * * * * * * * * * * * * * * * * 
         arbitray wave form commands 
@@ -86,4 +99,26 @@ class TTi_TG5011:
                  'ARB1', 'ARB2', 'ARB3', 'ARB4']
         if name not in types: print('%s not in %s, make sure %s is defined. Proceed anyway.'%(name,types,name))  
         self.sc.write("ARBLOAD %s"%name)
+
+    """ * * * * * * * * * * * * * * * * 
+        burst mode commands 
+        * * * * * * * * * * * * * * * *
+    """
+    def burstCount(self, count):
+        """ set the burst count"""
+        self.sc.write('BSTCOUNT %i'%count)
+
+    def burst(self, mode):
+        """ select burst type"""
+        modes = ['OFF', 'NCYC', 'GATED', 'INFINITE']
+        if mode not in modes:
+            print("%s not available in %s"%(mode,modes))
+            return False
+        self.sc.write('BST %s'%mode)
+
+
+
+    def write(self,msg):
+        """ generic write, debugging tool """
+        self.sc.write(msg)
    
