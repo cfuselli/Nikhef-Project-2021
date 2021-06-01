@@ -1,6 +1,8 @@
 ## Signal Calibration
-1. run `. setup.sh`\
-2. run scripts in `share`, keep data in `data`\
+Please refer to the instructions in `documentation/`
+
+1. run `. setup.sh`
+2. run scripts in `share/`, keep data in `data/`
 
 #### fun with ports:
 list available ports: `ls /dev/tty*`
@@ -10,6 +12,6 @@ the arduino normally appears as one of the USB ports (e.g. `/dev/ttyUSB0`), the 
 Give the user the permission to access a port:
 `sudo chmod 666 <portname>`
   
-####project structure:
-keep all classes needed in `python`, scripts belong into `share`.
+#### project structure:
+keep all classes needed in `python/`, scripts belong into `share/`. Documentation is in `documentation/`
 Dont forget to source `setup.sh`!
