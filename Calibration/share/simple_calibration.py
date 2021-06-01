@@ -12,24 +12,24 @@ import time
 
 parser = argparse.ArgumentParser(description='simple readout')
 # ports
-parser.add_argument('--p',type=str,default='/dev/ttyUSB0',required=False,
+parser.add_argument('-p',type=str,default='/dev/ttyUSB0',required=False,
                     help='detector port. dont forget to give rw access with sudo chmod 666 <port>')
-parser.add_argument('--tti',type=str,default='/dev/ttyACM0',required=False,
+parser.add_argument('-tti',type=str,default='/dev/ttyACM0',required=False,
                     help='signal generator port (type ACM*)')
 # calibration
-parser.add_argument('--vmin',type=float,default=0.02,required=False,
+parser.add_argument('-vmin',type=float,default=0.02,required=False,
                     help='minimum calibration signal voltage [V]')
-parser.add_argument('--vmax',type=float,default=1.0,required=False,
+parser.add_argument('-vmax',type=float,default=1.0,required=False,
                     help='maximum calibration signal voltage [V]')
-parser.add_argument('--nsteps',type=int,default=10,required=False,
+parser.add_argument('-nsteps',type=int,default=10,required=False,
                     help='n steps per voltage')
-parser.add_argument('--vsteps',type=float,default=0.01,required=False,
+parser.add_argument('-vsteps',type=float,default=0.01,required=False,
                     help='voltage step')
                     
 # output file
-parser.add_argument('--fpath',type=str,default='../data/',required=False,
+parser.add_argument('-fpath',type=str,default='../data/',required=False,
                     help='filepath, default ../data/')
-parser.add_argument('--fname',type=str,default='test',required=False,
+parser.add_argument('s-fname',type=str,default='test',required=False,
                     help='csv filename, default "", no need to add .txt')
 args = parser.parse_args()
 
