@@ -29,7 +29,7 @@ parser.add_argument('-vsteps',type=float,default=0.01,required=False,
 # output file
 parser.add_argument('-fpath',type=str,default='../data/',required=False,
                     help='filepath, default ../data/')
-parser.add_argument('s-fname',type=str,default='test',required=False,
+parser.add_argument('-fname',type=str,default='test',required=False,
                     help='csv filename, default "", no need to add .txt')
 args = parser.parse_args()
 
