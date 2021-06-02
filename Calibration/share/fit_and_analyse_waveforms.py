@@ -37,19 +37,19 @@ def get_data(fname):
         for i,row in enumerate(csv_reader): 
             if "NewFile" in fname:
                 if i<2: continue  # skip header
-                t.append(float(row[0]))
-                voltage.append(float(row[1]))
-                voltage2.append(float(row[2]))
+                t.append(float(row[0])*1e9)
+                voltage.append(float(row[2]))
+                #voltage2.append(float(row[2]))
             else:
                 t.append(float(row[3])*10**9)
                 voltage.append(float(row[4]))
             pass
 
-        index_max = voltage.index(max(voltage))     #cutt all data before peak (~t=0)
+        index_max = voltage.index(max(voltage))     #cut all data before peak (~t=0)
         peak = voltage[index_max:]
         t_peak = t[index_max:]
 
-        timemax = 0.8e-5
+        timemax = 2000
         for i,t in enumerate(reversed(t_peak)): 
             if t < timemax: 
                 index_tmax = t
@@ -109,15 +109,14 @@ def analysis(lambdas,lambda_errs, ampl, ampl_errs):
     plt.hist(l,bins=10,label='mean %.3e'%l.mean())
     plt.ylabel('Entries')
     plt.xlabel(r'$\lambda$')
-    plt.show()
+
+    print(l)
     
     plt.figure()
     plt.errorbar(a,l, xerr=aerrs, yerr=lerrs,fmt='o')
-    plt.ylim(0.0025, 0.0050)
+    #plt.ylim(0.0025, 0.0050)
     plt.ylabel(r'$\lambda$')
     plt.xlabel('V')
-
-    plt.show()
     
     print(r'The mean lambda is: ' , l.mean() , r' +/- ', lerr_mean)
     return l.mean()
@@ -162,13 +161,23 @@ def plot_multiple_waves(fpath, number_of_measurements=10, PLOT=False, Analysis=T
 
 #Do not plot single waveforms and fits, only analise
 print(args.n)
-plot_multiple_waves(path_to_files,
-                    number_of_measurements=args.n, PLOT=True) 
+#plot_multiple_waves(path_to_files,
+#                    number_of_measurements=args.n, PLOT=True) 
 
 #Do not analyse, only plot single waveforms and fits
 
 plot_multiple_waves(path_to_files,                  
                     number_of_measurements=args.n,
                     PLOT=True, 
-                    Analysis=False) 
+                    Analysis=True) 
+
+
+# close the plot when pressing a key
+plt.draw()
+plt.pause(1)
+input('press any key to close')
+plt.close('all')
+
+
+print('goodbye')
 

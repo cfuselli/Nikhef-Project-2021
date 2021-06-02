@@ -49,13 +49,14 @@ t = TTi_TG5011.TTi_TG5011(args.tti)
 a = args.vmin
 
 t.setAmplitude(a-args.vsteps)
-t.setFrequency(2e6)
-t.setPhase(288)
+t.setFrequency(1e6)
+t.setBurstPhase(340)
+t.setBurstPeriod(1)
 t.setArbWaveform('ARB1')
 t.burstCount(1)
 t.enableOutput('ON')
 t.burst('OFF')
-time.sleep(3)
+time.sleep(2)
 
 
 # read header
