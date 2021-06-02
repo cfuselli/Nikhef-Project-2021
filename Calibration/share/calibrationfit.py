@@ -10,31 +10,10 @@ Created on Tue Apr 13 14:23:58 2021
 
 import argparse
 import numpy as np
+import csv
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import numpy.polynomial.polynomial as poly
-
-def fit_func(x, *coeffs):
-    y = np.polyval(coeffs, x)
-    return y
-
-def polyfit(xdata,ydata,p0=None,rank=11):
-    
-    
-    popt  = poly.polyfit(xdata,ydata,rank) #, cov='unscaled')
-    print(popt)
-    # print out the fit params
-    #print('name, par, par err\n%s'%(20*'='))
-    #for i in range(rank): print('p%i:\t%.3f\t%.3f'%(i,popt[i],pcov[i][i]))
-    
-    # create fitfunc
-    fitfunc = np.polyval(popt[::-1], xdata)
-    
-    #vals , errs = [popt[i] for i in range(rank)], [pcov[i][i] for i in range(rank)]
-    #return vals , errs , fitfunc
-    return fitfunc
-    
-
+from scipy.optimize import curve_fit
 
 parser = argparse.ArgumentParser(description='calibration fit')
 # input file
@@ -47,50 +26,73 @@ parser.add_argument('-out_name',type=str,default=None,required=False,
                     help='calibration constants')
 parser.add_argument('-out_path',type=str,default='../data/calibration/',required=False,
                     help='default ../data/calibration/')
+parser.add_argument('-header',type=int,default=1,required=False,
+                    help='default 1')
+                    
 args = parser.parse_args()
-if '.txt' in args.in_name: args.in_name = args.in_name[:-4]
-print(args.in_name)
+if '.csv' in args.in_name: args.in_name = args.in_name[:-4]
+
+
+def fit_func(x, *coeffs):
+    y = np.polyval(coeffs, x)
+    return y
+
+def polyfit(xdata,ydata,p0=None,rank=11):
+    
+    popt, pcov = curve_fit(fit_func, xdata, ydata, p0 = np.zeros(rank))
+    
+    # print out the fit params
+    print('name, par, par err\n%s'%(20*'='))
+    for i in range(rank): print('p%i:\t%.3f\t%.3f'%(i,popt[i],pcov[i][i]))
+    print(20*'=')
+    
+    vals , errs = [popt[i] for i in range(rank)], [pcov[i][i] for i in range(rank)]
+    return vals , errs 
+    
+
 
 # read in the data
-data_volt, volt, data, err = [], [],[], []
-with open(args.in_path+args.in_name+'.txt') as file_in: 
-    for i, line in enumerate(file_in):
-        if i < 5 : continue
-        if i == 5: 
-            det_name = line
+volt, adc = [], []
+with open(args.in_path+args.in_name + '.csv') as csvfile:
+    
+    reader = csv.reader(csvfile, delimiter=',')
+    for i, line in enumerate(reader):
+        # skip header
+        if i < args.header : continue
+        # FIXME: get detector name? 
+        
+        # read in data
+        if len(line) == 1: adc.append(float(line[0]))
+        # get pulsing ampltidude
+        else: 
+            _volt = float(line[1])
+            print(_volt)
             continue
-        adc = float(line.split()[2])
-        trigger = str(line.split()[0])
-        # get the trigger steps
-        if trigger=='SET': 
-            volt.append(adc)
-            # calc ADC mean & std dev per voltage step
-            data.append(np.mean(data_volt))
-            err.append(np.std(data_volt))
-            data_volt = []
-            continue
-        else: data_volt.append(adc)
-
+        volt.append(_volt)
+    
+print(len(volt),len(adc))
 
 # convert to np.array
-data_volt, volt, data, err = np.array(data_volt), np.array(volt), np.array(data), np.array(err)
+volt, adc= np.array(volt), np.array(adc)
 # convert to mV
 mV = volt * 1e3 
 
 
 # fit
-#vals , errs , fitfunc = polyfit(volt,data, rank=2)
-fitfunc = polyfit(volt,data)
+vals , errs = polyfit(volt, adc, rank=3)
+
 
 # save values to file
-""""
+
 if args.out_name is None: args.out_name = args.in_name + '_calibration'
 savefile = open(args.out_path+args.out_name+'.csv','w')
-savefile.write("Calibration %s"%det_name) # det_name contains linebreak
+#savefile.write("Calibration %s"%det_name) # det_name contains linebreak
 for v, e in zip(vals,errs): savefile.write("%f, %f\n"%(v,e))
 savefile.close()
 print('saved calibration values to %s'%args.out_path+args.out_name+'.csv')
-"""
+
+
+
 
 # plot
 fontsize = 20 
@@ -98,10 +100,12 @@ fig = plt.figure(figsize=(12,7))
 ax = plt.gca()
 ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize)
 ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
-plt.title('Detector: %s'%det_name, size=fontsize)
-plt.errorbar(data,mV, xerr = err, fmt='o')
-plt.plot(data, fitfunc, color='r')#, label='%i'%len(vals))
-plt.yscale('log')
+#plt.title('Detector: %s'%det_name, size=fontsize)
+plt.scatter(adc,mV) # weird x y choice on purpose
+
+xplot = np.linspace(np.min(adc),np.max(adc),1000)
+plt.plot(xplot, fit_func(xplot, *vals), color='r', label='%i'%len(vals))
+#plt.yscale('log')
 plt.grid(True, which="both")
 plt.ylabel(r'Input pulse amplitude [mV]', size=fontsize)
 plt.xlabel('Measured ADC value [0-1023]', size=fontsize)
