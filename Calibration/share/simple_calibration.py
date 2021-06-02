@@ -48,8 +48,9 @@ t = TTi_TG5011.TTi_TG5011(args.tti)
 
 a = args.vmin
 
-t.setAmplitude(a-.01)
-t.setFrequency(1)
+t.setAmplitude(a-args.vsteps)
+t.setFrequency(2e6)
+t.setPhase(288)
 t.setArbWaveform('ARB1')
 t.burstCount(1)
 t.enableOutput('ON')
@@ -68,25 +69,38 @@ print('read header, start calibration')
 i = 0 
 while True:
     try:
+
+        # trigger
+        print('fire!')
+        
+        t.burst('NCYC')
+        #t.enableOutput('ON')
+        #t.burst('OFF')
+        #time.sleep(1)
+       
+
         # read the data (byte) as utf8
         data = d.readline().replace(b'\r\n',b'').decode('utf-8')
+        #t.enableOutput('OFF')
+        print('cease')
+
         print(data)
         savefile.write(data+'\n')
+        time.sleep(3)
 
         # increase amplitude every nsteps
         if i%args.nsteps==0: 
             a+=args.vsteps
-            if a >= args.vmax+.01: break
+            if a >= args.vmax+args.vsteps: break
             print('increasing amplitude to %.2f V'%a)
             savefile.write("SET AMPLITUDE %s\n"%a)
             t.setAmplitude(a)
             t.syncOut('ON')
             time.sleep(1)
             
-        # trigger
-        t.burst('NCYC')
-        t.burst('OFF')
-        time.sleep(2)
+        
+        
+        
         
         i+=1   
         

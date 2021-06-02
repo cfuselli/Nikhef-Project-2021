@@ -60,6 +60,10 @@ class TTi_TG5011:
     def setAmplitude(self, ampl):
         """ amplitude in units as specified by setAmplitudeUnit """
         self.sc.write("AMPL %f"%ampl)
+
+    def setPhase(self, phase):
+        """ phase in deg """
+        self.sc.write("PHASE %f"%phase)
     
     def enableOutput(self, output):
         outputs = ['ON','OFF','NORMAL',"INVERT"]
