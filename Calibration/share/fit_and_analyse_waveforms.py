@@ -2,7 +2,7 @@
 """
 Created on Fri Apr  2 13:09:25 2021
 Analysis of detector signals
-@author: NoorK
+@NookKosterUVa, @haslbeck
 """
 
 import matplotlib.pyplot as plt
@@ -12,33 +12,50 @@ import argparse
 import csv
 
 
-path_to_files = 'C:/Users/NoorK/OneDrive/Documenten/Studie/Master/JAAR_1/Nikhef_Project/Calibration/NEW_FOL'
+
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-f',type=str,help='txt file w muon signal')
+parser.add_argument('-f',type=str,default = None, help='name patter csv')
+parser.add_argument('-p',type=str,default='../data/',help='path to txt file w muon signal')
+parser.add_argument('-n',type=int,default=1,help='number of files')
 args = parser.parse_args()
 
-fname = args.f
-
+path_to_files = args.p
 plt.close('all')
 
  
 def get_data(fname):
     """ Get data (voltage and time measurements) from csv-file: start at peak, just after t=0 """
-    
+
+    print('get', fname)
+
+
     t, voltage, peak, t_peak = [],[],[],[] 
+    if "NewFile" in fname: voltage2, peak2, t_peak2 = [] , [] , []
     with open(fname ) as csv_file: 
         csv_reader = csv.reader(csv_file, delimiter= ',')
+        for i,row in enumerate(csv_reader): 
+            if "NewFile" in fname:
+                if i<2: continue  # skip header
+                t.append(float(row[0]))
+                voltage.append(float(row[1]))
+                voltage2.append(float(row[2]))
+            else:
+                t.append(float(row[3])*10**9)
+                voltage.append(float(row[4]))
+            pass
 
-        for row in csv_reader: 
-            t.append(float(row[3])*10**9)
-            voltage.append(float(row[4]))
-            
         index_max = voltage.index(max(voltage))     #cutt all data before peak (~t=0)
-        for i in range(len(voltage)):
-            if i > index_max:
-                peak.append(voltage[i])
-                t_peak.append(t[i])
+        peak = voltage[index_max:]
+        t_peak = t[index_max:]
+
+        timemax = 0.8e-5
+        for i,t in enumerate(reversed(t_peak)): 
+            if t < timemax: 
+                index_tmax = t
+                break
+        peak = peak[:-i]
+        t_peak = t_peak[:-i]
     return t_peak, peak
 
 
@@ -50,15 +67,14 @@ def exp_fit(xdata,ydata,p0=np.array([1e-4,1e-3]),plot=False):
     xdata = np.array(xdata) # covert to numpy array
     ydata = np.array(ydata)
     
-    def fit_func(x,a,b):
-        return a*np.exp(-b*x)
-    
     # fit
+    def fit_func(x,a,b):
+        return a*np.exp(-b*x)    
     popt, pcov = curve_fit(fit_func, xdata, ydata , p0 = p0)
-    
     a , aerr = popt[0], pcov[0][0]
     l , lerr = popt[1], pcov[1][1]
     if plot: 
+
         plt.plot(xdata, fit_func(xdata, *popt),
                  label='$a\cdot exp(-\lambda x)$\na: %.2e$\pm$%.2e\n$\lambda$: %.2e $\pm$ %.2e'%(a,aerr,l,lerr),
                  color='r',linewidth = 2)
@@ -77,7 +93,7 @@ def plot_signal(xdata, ydata):
     plt.tick_params(labelsize=10)
     plt.grid()
     plt.legend()
-    plt.show()
+    #plt.show()
     return fig
 
 
@@ -93,31 +109,37 @@ def analysis(lambdas,lambda_errs, ampl, ampl_errs):
     plt.hist(l,bins=10,label='mean %.3e'%l.mean())
     plt.ylabel('Entries')
     plt.xlabel(r'$\lambda$')
+    plt.show()
     
     plt.figure()
     plt.errorbar(a,l, xerr=aerrs, yerr=lerrs,fmt='o')
     plt.ylim(0.0025, 0.0050)
     plt.ylabel(r'$\lambda$')
     plt.xlabel('V')
+
+    plt.show()
     
     print(r'The mean lambda is: ' , l.mean() , r' +/- ', lerr_mean)
     return l.mean()
 
-def plot_multiple_waves(fpath, number_of_measurements=21, PLOT=False, Analysis=True, filename = 'lambdas.txt' ):
+def plot_multiple_waves(fpath, number_of_measurements=10, PLOT=False, Analysis=True, filename = 'lambdas.txt' ):
     
     ls, lerrs, a_s, aerrs = [],[],[],[]
     fnames = []
     
     start, stop = 0, number_of_measurements
 
+    print(stop)
     
     for i in range(start,stop):
-        fname = 'TEK000%i'%i if i < 10 else 'TEK00%i'%i
+        print('here', i)
+        if args.f is None: fname = 'TEK000%i'%i if i < 10 else 'TEK00%i'%i
+        else: fname = '%s%i'%(args.f,i)
+        print(fname)
         fnames.append(fname)
-        fname = fpath + '/' + fname + '.CSV'
+        fname = fpath + '/' + fname + '.csv'
         time, voltage = get_data(fname)
-        if PLOT: 
-            plot_signal(time,voltage)
+        if PLOT: plot_signal(time,voltage)
             
         l, lerr, a , aerr = exp_fit(time,voltage,p0=np.array([max(voltage),1e-3]),plot=PLOT)
         ls.append(l)
@@ -128,8 +150,7 @@ def plot_multiple_waves(fpath, number_of_measurements=21, PLOT=False, Analysis=T
     if Analysis:
         analysis(ls,lerrs,a_s,aerrs)    
     
-        # save the lambdas to file
-        
+        # save the calibration constants to file
         with open(filename, "w") as fwrite:
             fwrite.write('Filename, Lambda, Lambda error, Amplitude, Amplitude error\n')
             for i,l in enumerate(ls):
@@ -139,10 +160,15 @@ def plot_multiple_waves(fpath, number_of_measurements=21, PLOT=False, Analysis=T
     
     return 0
 
-plot_multiple_waves(path_to_files,                  #Do not plot single waveforms and fits, only analise
-                    PLOT=False) 
+#Do not plot single waveforms and fits, only analise
+print(args.n)
+plot_multiple_waves(path_to_files,
+                    number_of_measurements=args.n, PLOT=True) 
 
-plot_multiple_waves(path_to_files,                  #Do not analyse, only plot single waveforms and fits
-                    number_of_measurements=1,
+#Do not analyse, only plot single waveforms and fits
+
+plot_multiple_waves(path_to_files,                  
+                    number_of_measurements=args.n,
                     PLOT=True, 
                     Analysis=False) 
+
