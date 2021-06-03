@@ -103,35 +103,6 @@ void setup() {
   digitalWrite(3,LOW);
   if (MASTER == 1) {digitalWrite(6, LOW);}
 
-  /*
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);                               
-  pinMode(3, OUTPUT);
-  pinMode(6, INPUT);
-  
-  if (digitalRead(6) == HIGH) {
-      SLAVE = 1;
-      MASTER = 0;
-      digitalWrite(3,HIGH);
-      delay(1000);}
-
-  else{
-      delay(10);
-      MASTER = 1;
-      SLAVE = 0;
-      pinMode(6, OUTPUT);
-      digitalWrite(6, HIGH);}
-
-  if (OLED == 1){
-      display.setRotation(2);         // Upside down screen (0 is right-side-up)
-      OpeningScreen();                // Run the splash screen on start-up
-      delay(2000);                    // Delay some time to show the logo, and keep the Pin6 HIGH for coincidence
-      display.setTextSize(1);}
-
-  else {delay(2000);}
-  digitalWrite(3,LOW);
-  if (MASTER == 1) {digitalWrite(6, LOW);}
-  */
-
   Serial.println(F("##########################################################################################"));
   Serial.println(F("### CosmicWatch: The Desktop Muon Detector"));
   Serial.println(F("### Questions? saxani@mit.edu"));
@@ -157,6 +128,7 @@ void loop()
       
       countslave++;
       theanalogwas = analogRead(A0);
+      
       // Make a measurement of the pulse amplitude
       int adc = analogRead(A0);
       // If Master, send a signal to the Slave
