@@ -108,7 +108,7 @@ class TTi_TG5011:
         burst mode commands 
         * * * * * * * * * * * * * * * *
     """
-    def burstCount(self, count):
+    def setBurstCount(self, count):
         """ set the burst count"""
         self.sc.write('BSTCOUNT %i'%count)
 
@@ -120,8 +120,17 @@ class TTi_TG5011:
             return False
         self.sc.write('BST %s'%mode)
 
+    def setBurstPhase(self, degree):
+        self.sc.write("BSTPHASE %f"%degree)
+
+    def setBurstPeriod(self, seconds):
+        self.sc.write("BSTPER %f"%seconds)
 
 
+    """ * * * * * * * * * * * * * * * * 
+        debugging mode commands 
+        * * * * * * * * * * * * * * * *
+    """
     def write(self,msg):
         """ generic write, debugging tool """
         self.sc.write(msg)
