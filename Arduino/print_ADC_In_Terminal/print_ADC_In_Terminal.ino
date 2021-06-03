@@ -21,17 +21,11 @@
 #include <SPI.h>
 #include <EEPROM.h>
 
-const byte OLED = 1;                      // Turn on/off the OLED [1,0]
+
 
 const int SIGNAL_THRESHOLD      = 50;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
 const int RESET_THRESHOLD       = 15;    
 
-const int LED_BRIGHTNESS        = 255;    // Brightness of the LED [0,255]
-
-const long double cal[] = {-9.085681659276021e-27, 4.6790804314609205e-23, -1.0317125207013292e-19,
-  1.2741066484319192e-16, -9.684460759517656e-14, 4.6937937442284284e-11, -1.4553498837275352e-08,
-   2.8216624998078298e-06, -0.000323032620672037, 0.019538631135788468, -0.3774384056850066, 12.324891083404246};
-   
 const int cal_max = 1023;
 
 //INTERUPT SETUP
@@ -88,12 +82,8 @@ void setup() {
   digitalWrite(3,LOW);
   if (MASTER == 1) {digitalWrite(6, LOW);}
   
-  Serial.println(F("##########################################################################################"));
-  Serial.println(F("### CosmicWatch: The Desktop Muon Detector"));
-  Serial.println(F("### Questions? saxani@mit.edu"));
-  Serial.println(F("### Comp_date Comp_time Event Ardn_time[ms] ADC[0-1023] SiPM[mV] Deadtime[ms] Temp[C] Name"));
-  Serial.println(F("##########################################################################################"));
-
+  Serial.println("# Calibration raw adc with signal threshold " + (String)SIGNAL_THRESHOLD);
+  
   
 }
 
