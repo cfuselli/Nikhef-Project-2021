@@ -64,10 +64,11 @@ with open(args.in_path+args.in_name + '.csv') as csvfile:
         # read in data
         if len(line) == 1: adc.append(float(line[0]))
         # get pulsing ampltidude
-        else: 
+        elif len(line) == 2:
             _volt = float(line[1])
             print(_volt)
             continue
+        else: continue
         volt.append(_volt)
     
 print(len(volt),len(adc))
@@ -104,7 +105,7 @@ ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
 plt.scatter(adc,mV) # weird x y choice on purpose
 
 xplot = np.linspace(np.min(adc),np.max(adc),1000)
-plt.plot(xplot, fit_func(xplot, *vals), color='r', label='%i'%len(vals))
+#plt.plot(xplot, fit_func(xplot, *vals), color='r', label='%i'%len(vals))
 #plt.yscale('log')
 plt.grid(True, which="both")
 plt.ylabel(r'Input pulse amplitude [mV]', size=fontsize)
