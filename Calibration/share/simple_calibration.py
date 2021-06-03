@@ -75,7 +75,8 @@ savefile.write("AMPLITUDE, %s\n"%amp)
 t.enableOutput('ON')
 i = 0 
 while True:
-    try:     
+    try:    
+        t.burst('NCYC')
         # read the data (byte) as utf8
         data = d.readline().replace(b'\r\n',b'').decode('utf-8')
         print(data)
@@ -100,7 +101,7 @@ while True:
     except KeyboardInterrupt:
         t.enableOutput('OFF')
         break
-
+t.enableOutput('OFF')
 savefile.close()
 print('Saved file to:\npath: %s\nname: %s'%(args.fpath,args.fname))       
 print('Goodbye')
