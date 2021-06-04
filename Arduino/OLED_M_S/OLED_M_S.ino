@@ -188,7 +188,6 @@ void loop()
              }
 
       // get_detector_name(detector_name);
-      Serial.println(detector_name);
       Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
       keep_pulse = 0;
       digitalWrite(3, LOW);
