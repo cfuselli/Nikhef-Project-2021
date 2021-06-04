@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0952ccf2-b3a8-45f0-9382-076891d00e6b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Arduino/OLED_M_S/OLED_M_S.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Arduino/OLED_M_S/OLED_M_S.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Calibration/share/live.py" beforeDir="false" afterPath="$PROJECT_DIR$/Calibration/share/live.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +24,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager" selected="Python.live">
+  <component name="RunManager" selected="Python.import_data">
     <configuration name="import_data" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Nikhef-Project-2021" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -69,8 +69,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.live" />
         <item itemvalue="Python.import_data" />
+        <item itemvalue="Python.live" />
       </list>
     </recent_temporary>
   </component>
@@ -88,21 +88,21 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1259" height="291" key="GridCell.Tab.0.bottom" timestamp="1622804637917">
+    <state width="1259" height="291" key="GridCell.Tab.0.bottom" timestamp="1622810129652">
       <screen x="0" y="23" width="1280" height="741" />
     </state>
-    <state width="1259" height="291" key="GridCell.Tab.0.bottom/0.23.1280.741@0.23.1280.741" timestamp="1622804637917" />
-    <state width="1259" height="291" key="GridCell.Tab.0.center" timestamp="1622804637915">
+    <state width="1259" height="291" key="GridCell.Tab.0.bottom/0.23.1280.741@0.23.1280.741" timestamp="1622810129652" />
+    <state width="1259" height="291" key="GridCell.Tab.0.center" timestamp="1622810129651">
       <screen x="0" y="23" width="1280" height="741" />
     </state>
-    <state width="1259" height="291" key="GridCell.Tab.0.center/0.23.1280.741@0.23.1280.741" timestamp="1622804637915" />
-    <state width="1259" height="291" key="GridCell.Tab.0.left" timestamp="1622804637914">
+    <state width="1259" height="291" key="GridCell.Tab.0.center/0.23.1280.741@0.23.1280.741" timestamp="1622810129651" />
+    <state width="1259" height="291" key="GridCell.Tab.0.left" timestamp="1622810129650">
       <screen x="0" y="23" width="1280" height="741" />
     </state>
-    <state width="1259" height="291" key="GridCell.Tab.0.left/0.23.1280.741@0.23.1280.741" timestamp="1622804637914" />
-    <state width="1259" height="291" key="GridCell.Tab.0.right" timestamp="1622804637915">
+    <state width="1259" height="291" key="GridCell.Tab.0.left/0.23.1280.741@0.23.1280.741" timestamp="1622810129650" />
+    <state width="1259" height="291" key="GridCell.Tab.0.right" timestamp="1622810129651">
       <screen x="0" y="23" width="1280" height="741" />
     </state>
-    <state width="1259" height="291" key="GridCell.Tab.0.right/0.23.1280.741@0.23.1280.741" timestamp="1622804637915" />
+    <state width="1259" height="291" key="GridCell.Tab.0.right/0.23.1280.741@0.23.1280.741" timestamp="1622810129651" />
   </component>
 </project>
