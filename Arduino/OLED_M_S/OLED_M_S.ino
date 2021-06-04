@@ -24,7 +24,6 @@
 const byte OLED = 1;                      // Turn on/off the OLED [1,0]
 
 // Originally it was 50 and 15
-// For carlo: 85 45
 const int SIGNAL_THRESHOLD      = 50;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
 const int RESET_THRESHOLD       = 18;    
 
@@ -65,7 +64,7 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -126,7 +125,6 @@ void loop()
   while (1){
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
-      countslave++;
       theanalogwas = analogRead(A0);
       
       // Make a measurement of the pulse amplitude
@@ -143,6 +141,7 @@ void loop()
       // If Slave, check for signal from Master
       
       if (SLAVE == 1){
+          countslave++;
           if (digitalRead(6) == HIGH){
               keep_pulse = 1;
               count++;}}  
@@ -176,15 +175,20 @@ void loop()
           analogWrite(3, LED_BRIGHTNESS);
           sipm_voltage = get_sipm_voltage(adc);
           last_sipm_voltage = sipm_voltage; 
-          Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage+ " " + measurement_deadtime+ " " + temperatureC);}
+          // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage+ " " + measurement_deadtime+ " " + temperatureC);
+          }
   
       if (SLAVE == 1) {
           if (keep_pulse == 1) {   
               analogWrite(3, LED_BRIGHTNESS);
               sipm_voltage = get_sipm_voltage(adc);
               last_sipm_voltage = sipm_voltage; 
-              Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC);}}
-      
+              // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC);
+              }
+             }
+
+
+      Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse);
       keep_pulse = 0;
       digitalWrite(3, LOW);
       
@@ -243,9 +247,12 @@ void get_time()
 //  display.println((String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
 
   display.println("Count: " + (String)count + " [" + (String)countslave + "]");
-  display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
+  display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
-  
+
+  // If you want to see the base signal and the screen is not working
+  // Serial.println((String)analogRead(A0));
+
   if (count < 0) {
     display.println("Hi, I'm "+(String)detector_name);
     }
