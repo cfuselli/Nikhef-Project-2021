@@ -80,7 +80,7 @@ mV = volt * 1e3
 
 
 # fit
-vals , errs = polyfit(volt, adc, rank=3)
+vals , errs = polyfit(adc, mV, rank=6)
 
 
 # save values to file
