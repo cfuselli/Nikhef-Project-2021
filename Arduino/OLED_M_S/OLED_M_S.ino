@@ -249,7 +249,6 @@ void get_time()
   display.println("Count: " + (String)count + " [" + (String)countslave + "]");
   display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
-
   // If you want to see the base signal and the screen is not working
   // Serial.println((String)analogRead(A0));
 
