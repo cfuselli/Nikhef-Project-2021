@@ -98,8 +98,6 @@ mV = volt * 1e3
 # fit
 vals , errs = polyfit(adc, mV, rank=6)
 
-chi2 = np.sum((mV-fit_func(adc))**2/fit_func(adc))
-print('chi2 = ', chi2)
 
 # save values to file
 
