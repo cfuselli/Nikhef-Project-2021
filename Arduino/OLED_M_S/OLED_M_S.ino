@@ -58,13 +58,14 @@ unsigned long measurement_t2;
 float sipm_voltage                            = 0;
 long int count                                = 0L;      // A tally of the number of muon counts observed
 long int countslave                           = 0L;      // A tally of the number of muon counts observed
+long int countpin6                            = 0L;
 
 float last_sipm_voltage                       = 0;
 float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             =  0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             =  1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -79,6 +80,8 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);                               
   pinMode(3, OUTPUT);
   pinMode(6, INPUT);
+  pinMode(13, OUTPUT);
+
   if (MASTER_SLAVE == 1) { // SLAVE
       SLAVE = 1;
       MASTER = 0;
@@ -123,6 +126,11 @@ void setup() {
 void loop()
 {
   while (1){
+
+    if (digitalRead(6) == HIGH){
+      countpin6++;
+    }
+    
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
       theanalogwas = analogRead(A0);
@@ -246,7 +254,7 @@ void get_time()
 
 //  display.println((String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
 
-  display.println("Count: " + (String)count + " [" + (String)countslave + "]");
+  display.println("Count: " + (String)count + " [" + (String)countslave + "] " + "{" + countpin6 + "}");
   display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
   // If you want to see the base signal and the screen is not working
