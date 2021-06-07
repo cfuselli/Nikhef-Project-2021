@@ -105,14 +105,15 @@ void setup() {
   digitalWrite(3,LOW);
   if (MASTER == 1) {digitalWrite(6, LOW);}
 
+  get_detector_name(detector_name);
+  Serial.println((String)"Detector name: " + detector_name);
   Serial.println(F("##########################################################################################"));
   Serial.println(F("### CosmicWatch: The Desktop Muon Detector"));
   Serial.println(F("### Questions? saxani@mit.edu"));
   Serial.println(F("### Comp_date Comp_time Event Ardn_time[ms] ADC[0-1023] SiPM[mV] Deadtime[ms] Temp[C] Name"));
   Serial.println(F("##########################################################################################"));
 
-  get_detector_name(detector_name);
-  Serial.println(detector_name);
+
   get_time();
   delay(900);
   start_time = millis();
@@ -183,7 +184,7 @@ void loop()
           analogWrite(3, LED_BRIGHTNESS);
           sipm_voltage = get_sipm_voltage(adc);
           last_sipm_voltage = sipm_voltage; 
-          // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage+ " " + measurement_deadtime+ " " + temperatureC);
+          Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
           }
   
       if (SLAVE == 1) {
@@ -191,12 +192,12 @@ void loop()
               analogWrite(3, LED_BRIGHTNESS);
               sipm_voltage = get_sipm_voltage(adc);
               last_sipm_voltage = sipm_voltage; 
-              // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC);
+              Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
               }
              }
 
       // get_detector_name(detector_name);
-      Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
+      //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
       keep_pulse = 0;
       digitalWrite(3, LOW);
       

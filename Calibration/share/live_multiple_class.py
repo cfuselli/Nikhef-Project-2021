@@ -8,11 +8,17 @@ import sys, glob
 
 class Detector:
     def __init__(self, serialport):
+        self.port_name = serialport
         self.port = serial.Serial(port=serialport,baudrate=9600, timeout = None)
 
     def set_layer(self, layer_num):
         self.layer = layer_num
 
+    def set_name(self, dname):
+        self.name = dname
+
+    def readline(self):
+        return self.port.readline().replace(b'\r\n', b'').decode('utf-8')
 
 
 def serial_ports():
@@ -56,34 +62,37 @@ port_name_list = []
 for i in range(len(ArduinoPort)):
     port_name_list.append(str(port_list[int(ArduinoPort[i])-1]))
 
-print("The selected port(s) is(are): ")
-for i in range(nDetectors):
-    print('\t['+str(ArduinoPort[i])+']' +port_name_list[i])
-print(" ")
 
-ports = []
+detectors = []
 for port_name in port_name_list:
 # open connection to detector
-    ports.append(serial.Serial(port=port_name,baudrate=9600, timeout = None))
+    detector = Detector(port_name)
+    # ports.append(serial.Serial(port=port_name,baudrate=9600, timeout = None))
+    detectors.append(detector)
+    detector.set_layer(2)
 
-for i, port in enumerate(ports):
-    print("\n", port_name_list[i])
+for detector in detectors:
     headcount = 0
     while headcount < 6:
-        if port.inWaiting():
+        if detector.port.inWaiting():
             headcount += 1
-            data = port.readline().replace(b'\r\n', b'').decode('utf-8')
-            print(data)
+            data = detector.readline()
+            if data.startswith('Detector name:'):
+                detector.set_name(data[14:])
 
+
+for detector in detectors:
+    print(detector.name, detector.port_name, detector.layer)
 print("\nStart reading data\n")
+
 
 a = datetime.now()
 while True:
-    for port in ports:
-        if port.inWaiting():
+    for detector in detectors:
+        if detector.port.inWaiting():
             # trigger
             # read the data (byte) as utf8
-            data = port.readline().replace(b'\r\n',b'').decode('utf-8')
+            data = detector.readline()
             b = datetime.now()
             timediff = b - a
             a = datetime.now()
