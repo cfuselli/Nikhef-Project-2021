@@ -7,7 +7,7 @@ import time
 # d = serial.Serial(port='/dev/ttyUSB0',baudrate=9600, timeout = None)
 
 # Carlo's Macbook
-d = serial.Serial(port='/dev/tty.usbserial-1420',baudrate=9600, timeout = 1)
+d = serial.Serial(port='/dev/tty.usbserial-14240',baudrate=9600, timeout = 1)
 
 while True:
     try:

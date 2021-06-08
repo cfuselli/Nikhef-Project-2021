@@ -44,6 +44,8 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 //initialize variables
 char detector_name[40];
+char detector_type[6];
+
 
 unsigned long time_stamp                      = 0L;
 unsigned long measurement_deadtime            = 0L;
@@ -105,14 +107,15 @@ void setup() {
   digitalWrite(3,LOW);
   if (MASTER == 1) {digitalWrite(6, LOW);}
 
-  get_detector_name(detector_name);
-  Serial.println((String)"Detector name: " + detector_name);
-  Serial.println(F("##########################################################################################"));
-  Serial.println(F("### CosmicWatch: The Desktop Muon Detector"));
-  Serial.println(F("### Questions? saxani@mit.edu"));
-  Serial.println(F("### Comp_date Comp_time Event Ardn_time[ms] ADC[0-1023] SiPM[mV] Deadtime[ms] Temp[C] Name"));
-  Serial.println(F("##########################################################################################"));
 
+  get_detector_name(detector_name);  
+  if (MASTER == 1){
+      Serial.println((String)detector_name + ", MASTER");}
+  else{
+      Serial.println((String)detector_name + ", SLAVE");}
+
+
+  //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
 
   get_time();
   delay(900);
@@ -128,6 +131,7 @@ void loop()
 {
   while (1){
 
+    // This is to check if the jack is working
     if (digitalRead(6) == HIGH){
       countpin6++;
     }
