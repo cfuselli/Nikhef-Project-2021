@@ -114,7 +114,6 @@ void setup() {
   else{
       Serial.println((String)detector_name + ", SLAVE");}
 
-
   //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
 
   get_time();

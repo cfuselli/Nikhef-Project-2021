@@ -8,8 +8,11 @@ import time
 import configparser
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
+import matplotlib.animation
+import os
 
 print(" ")
+
 
 class Detector:
     def __init__(self):
@@ -57,6 +60,9 @@ class Layer:
 
     def add_detector(self, det):
         self.detectors.append(det)
+
+    def remove_detector(self, det):
+        self.detectors.remove(det)
 
 
 class Grid:
@@ -107,6 +113,15 @@ class Grid:
             plt.show()
         return ax
 
+    def remove_undefined_detectors(self):
+        for lay in self.layers:
+            for d in lay.detectors:
+                if d.port_name == 'Port undefined':
+                    print('\nRemoved this detector, port undefined!')
+                    d.info()
+                    print(' ')
+                    lay.remove_detector(d)
+
 
 class Stack:
     def __init__(self, maxitems):
@@ -130,27 +145,11 @@ class Stack:
     def size(self):
         return len(self.items)
 
-class Muon:
-    def __init__(self):
-        self.signals = []
-
-    def add_signal(self, sig):
-        self.signals.append(sig)
-
-        def sortkey(s):
-            return s.detector.layer
-        self.signals.sort(key=sortkey)
-
-    def peek(self, i=0):
-        return self.signals[len(self.signals) - i - 1]
-
-    def write(self):
-        for s in self.signals:
-            s.info()
-
-    def plot(self, ax):
-        # still to do
-        print("Function plot still to implement")
+    def detectors(self):
+        result = []
+        for it in self.items:
+            result.append(it.detector)
+        return result
 
 
 class Signal:
@@ -162,6 +161,7 @@ class Signal:
         self.adc = data[3]
         self.volt = data[4]
         self.muon = False
+        self.count = int(data[0])
 
     def set_muon(self):
         self.muon = True
@@ -175,7 +175,13 @@ class Signal:
             layertab = "    "
         if self.detector.layer == 2:
             layertab = "        "
-        print(layertab, self.detector.name, self.time, self.timediff, self.adc, self.volt)
+        s = layertab + ' ' + str(self.count) + ' ' + self.detector.name + ' ' + str(self.time) + ' ' + str(self.timediff) + ' ' + str(self.adc) + ' ' + str(self.volt) + ' ' + str(self.timediff)
+        return s
+
+    def write(self, f):
+        f.write(self.info() + '\n')
+        f.flush()
+
 
 def serial_ports():
     """ Lists serial port names
@@ -222,9 +228,6 @@ def serial_ports():
 
 
 stack = Stack(2)
-stack.push(2)
-stack.push(3)
-stack.push('ciao')
 
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
@@ -244,12 +247,10 @@ for el in config_detectors:
     d.set_pos(pos)
     d.set_name(el[0])
     grid.layers[d.get_layer()].add_detector(d)
-
 grid.info()
-ax = grid.plot(show=False)
+
 
 port_name_list = serial_ports()
-
 for port_name in port_name_list:
     conn = serial.Serial(port=port_name, baudrate=9600, timeout=None)
     while True:
@@ -262,49 +263,22 @@ for port_name in port_name_list:
                     break
             break
 
+grid.remove_undefined_detectors()
+grid.info()
+ax = grid.plot(show=True)
 
-'''
-detectors = []
-for i, port_name in enumerate(port_name_list):
-    detector = Detector(port_name)
-    detectors.append(detector)
-
-    headcount = 0
-    while headcount < 3:
-        if detector.port.inWaiting():
-            data = detector.readline()
-            if headcount == 0:
-                detector.set_name(data)
-            if headcount == 1:
-                detector.set_type(data)
-            headcount += 1
-
-    print("[%i]" % i, detector.name, detector.type, detector.port_name)
-
-
-config = configparser.ConfigParser(allow_no_value=True)
-config.read('setup.ini')
-nLayers = config['DEFAULT']['nLayers']
-
-grid = Grid()
-print(" ")
-for n in range(int(nLayers)):
-    l = Layer()
-    det_name_on_layer = config['LAYER%i' % n]['detectors'].split(',')
-    print('Layer%i' % n, config['LAYER%i' % n]['detectors'])
-    for name in det_name_on_layer:
-        for detector in detectors:
-            if detector.name == name.lstrip():
-                l.add_detector(detector)
-                detector.set_layer(n)
-    grid.add_layer(l)
-
-print(" ")
-grid.show_grid()
-'''
-
+cwd = os.getcwd()
+fname = input("Enter file name (default: " + cwd + "/output_data.txt):")
+if fname == '':
+    fname = cwd + "/output_data.txt"
+print('Saving data to: ' + fname)
+file = open(fname, "w")
 
 print("\nStart reading data\n")
+
+
+
+
 
 # Don't consider the first two seconds of data
 t_end = time.time() + 2
@@ -320,24 +294,41 @@ while True:
         if detector.port.inWaiting():
             now = datetime.now()
             data = detector.readline()
-            timediff = now - stack.peek().time
-            timediff = timediff.total_seconds()
-            muontimediff = now - muon.peek().time
+
+            try:
+                timediff = now - stack.peek().time
+                timediff = timediff.total_seconds()
+            except:
+                timediff = 10
 
             signal = Signal(data, detector, now, timediff)
             stack.push(signal)
 
-            if timediff < 0.05:
-                if muontimediff < 0.05:
-                    muon.add_signal(signal)
-                    # muon.write()
+            if timediff < 0.05 and stack.isEmpty() is False and detector is not stack.peek(1).detector:
+                if stack.peek(1).muon and detector is not stack.detectors:
+                    #muon.add_signal(signal)
+                    signal.set_muon()
+                    signal.write(file)
+                    print(signal.info())
+
+
                 else:
-                    muon.write()
-                    muon = Muon()
-                    muon.add_signal(stack.peek())
-                    muon.add_signal(signal)
+                    #muon = Muon()
+                    file.write('>>>> Start muon\n')
+                    print('>>>> Start muon')
+                    #muon.add_signal(stack.peek(1))
+                    #muon.add_signal(signal)
+                    stack.peek(1).set_muon()
+                    signal.set_muon()
 
-                #signal.set_muon()
-                #stack.peek().set_muon()
+                    stack.peek(1).write(file)
+                    signal.write(file)
 
-            signal.info()
+                    print(signal.info())
+                    print(stack.peek(1).info())
+
+
+
+
+
+
