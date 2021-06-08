@@ -44,6 +44,8 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 //initialize variables
 char detector_name[40];
+char detector_type[6];
+
 
 unsigned long time_stamp                      = 0L;
 unsigned long measurement_deadtime            = 0L;
@@ -58,13 +60,14 @@ unsigned long measurement_t2;
 float sipm_voltage                            = 0;
 long int count                                = 0L;      // A tally of the number of muon counts observed
 long int countslave                           = 0L;      // A tally of the number of muon counts observed
+long int countpin6                            = 0L;
 
 float last_sipm_voltage                       = 0;
 float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             =  0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             =  1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -79,6 +82,8 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);                               
   pinMode(3, OUTPUT);
   pinMode(6, INPUT);
+  pinMode(13, OUTPUT);
+
   if (MASTER_SLAVE == 1) { // SLAVE
       SLAVE = 1;
       MASTER = 0;
@@ -102,14 +107,16 @@ void setup() {
   digitalWrite(3,LOW);
   if (MASTER == 1) {digitalWrite(6, LOW);}
 
-  Serial.println(F("##########################################################################################"));
-  Serial.println(F("### CosmicWatch: The Desktop Muon Detector"));
-  Serial.println(F("### Questions? saxani@mit.edu"));
-  Serial.println(F("### Comp_date Comp_time Event Ardn_time[ms] ADC[0-1023] SiPM[mV] Deadtime[ms] Temp[C] Name"));
-  Serial.println(F("##########################################################################################"));
 
-  get_detector_name(detector_name);
-  Serial.println(detector_name);
+  get_detector_name(detector_name);  
+  if (MASTER == 1){
+      Serial.println((String)detector_name + ", MASTER");}
+  else{
+      Serial.println((String)detector_name + ", SLAVE");}
+
+
+  //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
+
   get_time();
   delay(900);
   start_time = millis();
@@ -123,6 +130,12 @@ void setup() {
 void loop()
 {
   while (1){
+
+    // This is to check if the jack is working
+    if (digitalRead(6) == HIGH){
+      countpin6++;
+    }
+    
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
       theanalogwas = analogRead(A0);
@@ -175,7 +188,7 @@ void loop()
           analogWrite(3, LED_BRIGHTNESS);
           sipm_voltage = get_sipm_voltage(adc);
           last_sipm_voltage = sipm_voltage; 
-          // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage+ " " + measurement_deadtime+ " " + temperatureC);
+          Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
           }
   
       if (SLAVE == 1) {
@@ -183,12 +196,12 @@ void loop()
               analogWrite(3, LED_BRIGHTNESS);
               sipm_voltage = get_sipm_voltage(adc);
               last_sipm_voltage = sipm_voltage; 
-              // Serial.println((String)count + " " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC);
+              Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
               }
              }
 
       // get_detector_name(detector_name);
-      Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
+      //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
       keep_pulse = 0;
       digitalWrite(3, LOW);
       
@@ -246,7 +259,7 @@ void get_time()
 
 //  display.println((String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
 
-  display.println("Count: " + (String)count + " [" + (String)countslave + "]");
+  display.println("Count: " + (String)count + " [" + (String)countslave + "] " + "{" + countpin6 + "}");
   display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
   // If you want to see the base signal and the screen is not working
