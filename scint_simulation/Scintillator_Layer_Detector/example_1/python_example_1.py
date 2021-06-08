@@ -166,9 +166,8 @@ def simulation_energy(N=10000,N_E=10,E_max=60,theta_max_energy=60):
     x,y,z,dx,dy,dz=source(2,1,0.3,theta_max=theta_max)
     name1 =[]
     name2 =[]
-    n=-1
+    n=0
     for i in e:
-        n+=1
         name1.append("sim_en_"+str(int(i))+"_0.conf")
         f = open(name1[n], "w")
         f.write(
@@ -202,7 +201,7 @@ extra_scint_info = true
 include = "nothing"
 
 [VisualizationGeant4]''')
-	
+
         f.close()
         name2.append("sim_en_"+str(int(i))+"_60.conf")
         f = open(name2[n], "w")
@@ -237,7 +236,8 @@ extra_scint_info = true
 include = "nothing"
 
 [VisualizationGeant4]''')
+    n=+1
     return name1,name2
+
     
-    
-a,b=simulation_energy()
+a=simulation(1000,4,4)
