@@ -197,7 +197,7 @@ class Signal:
         # " " + sipm_voltage + " " + measurement_deadtime + " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name
 
     def info(self):
-        s = '   ' + str(self.count) + ' ' + self.detector.name + ' ' + str(self.time) + ' ' + str(self.adc) + ' ' + str(self.volt) + ' ' + str(self.timediff)
+        s = '   ' + self.detector.name + ' ' + str(self.time) + ' ' + str(self.adc) + ' ' + str(self.volt) + ' ' + str(self.timediff)
         return s
 
     def write(self, f):
