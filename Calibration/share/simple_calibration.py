@@ -110,8 +110,9 @@ while True:
         t.enableOutput('OFF')
         break
 
-t.setLocal()
 t.enableOutput('OFF')
+t.setLocal()
+
 savefile.close()
 print('Saved file to:\npath: %s\nname: %s'%(args.fpath,args.fname))       
 print('Goodbye')
