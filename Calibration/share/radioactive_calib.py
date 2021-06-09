@@ -8,7 +8,7 @@ import argparse
 import time
 
 
-parser = argparse.ArgumentParser(description='Radioactive Calibration script')
+parser = argparse.ArgumentParser(description='Radioactive Calibration script saving timestamp and ADC values\nBest to use raw_adc ino script')
 # ports
 parser.add_argument('-p',type=str,default='/dev/ttyUSB0',required=False,
                     help='detector port. dont forget to give rw access with sudo chmod 666 <port>')
@@ -42,7 +42,8 @@ for l in range(args.header):
     print(data)
     savefile.write(data+'\n')
 print('read in header, start calibration')
-
+savefile.write("Time [s], ADC \n")
+print("Time [s], ADC \n%s"%("="*20))
 
 tstart = time.time()
 i = 0 
@@ -57,10 +58,12 @@ while True:
         
         # read the data (byte) as utf8
         data = d.readline().replace(b'\r\n',b'').decode('utf-8')
-        print(data)
-        savefile.write(data+'\n')
+        tread = time.time() # timestamp
+        
+        savefile.write("%s, %s \n"%(tread-tstart,data)) # save
+        print("%i, %.2f, %s"%(i,tread-tstart,data))
+        
         time.sleep(args.pause)
-
         i+=1   
         
     # halfly graceful exit... 
