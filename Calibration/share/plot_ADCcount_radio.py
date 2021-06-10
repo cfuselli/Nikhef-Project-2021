@@ -30,17 +30,12 @@ def get_data(fname):
     print('get', fname)
 
 
-    adc = [] 
-    if "NewFile" in fname: adc2 = []
+    adc = []
     with open(fname ) as csv_file: 
         csv_reader = csv.reader(csv_file, delimiter= ',')
-        for i,row in enumerate(csv_reader): 
-            if "NewFile" in fname:
-                if i<6: continue  # skip header
-            
-                adc.append(float(row[2]))
-            else:
-                adc.append(float(row[4]))
+        for i,row in enumerate(csv_reader):
+            if i<6: continue  # skip header
+            adc.append(float(row[2]))
             pass
 
         index_max = adc.index(max(adc))     #cut all data before peak (~t=0)
