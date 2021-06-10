@@ -31,7 +31,10 @@ def get_data(fname):
 
 
     adc = []
-    with open(fname ) as csv_file: 
+    fpath = "../data/"
+    file_loc = (fpath+fname)
+    print (file_loc)
+    with open(file_loc) as csv_file: 
         csv_reader = csv.reader(csv_file, delimiter= ',')
         for i,row in enumerate(csv_reader):
             if i<6: continue  # skip header
