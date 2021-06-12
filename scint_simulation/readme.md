@@ -21,3 +21,7 @@ maximum,considering the travelled distance inside the scintillator.
 
 #Scintillator_shape:
 We test how the different dimensions of the scintillator effect the measureble events.
+
+#Planb and Planc:
+Different final detector configurations for the case of 8 working detectors.
+
