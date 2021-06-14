@@ -82,12 +82,21 @@ class Detector:
     def readline(self):
         return self.port.readline().replace(b'\r\n', b'').decode('utf-8')
 
-    def info(self):
+    def info(self, counts=False):
         res = '{} {} {} {} {}'.format(self.layer,
                                       self.type,
                                       self.pos,
                                       self.port_name,
                                       self.name)
+        if counts:
+            res = '{} {} {} {} {} {} {}'.format(self.layer,
+                                                self.type,
+                                                self.pos,
+                                                self.port_name,
+                                                self.name,
+                                                self.count,
+                                                self.muon_count)
+
         return res
 
 

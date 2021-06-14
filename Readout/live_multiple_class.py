@@ -97,7 +97,7 @@ control_file = open(folder_name + '/output_master_control%i.txt' % file_number, 
 
 grid_file.write(datetime.today().ctime() + '\n')
 grid_file.write(grid.info())
-grid_file.close()
+grid_file.flush()
 
 header = '# layer adc volt temp timediff time detector_muon_count detector_count detector_name\n'
 
@@ -108,7 +108,7 @@ muon_count = 0
 signal_control_count = 0
 
 print("\nStart reading data\n")
-
+start = datetime.now()
 
 # Don't consider the first two seconds of data
 # Not sure this is smart but made sense at some point
@@ -170,5 +170,10 @@ while True:
                         file_number += 1
                         file = open(folder_name + '/output_data%i.txt' % file_number, "w")
                         file.write(header)
+                        tnow = datetime.now()
+                        tdelta = datetime.now() - start
+                        grid_file.write('\n' + tnow.ctime() + '(' + str(tdelta) + ')\n')
+                        grid_file.write(grid.info() + '\n')
+                        grid_file.flush()
 
                 muon.reset()
