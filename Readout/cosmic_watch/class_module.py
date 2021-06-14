@@ -36,7 +36,7 @@ def serial_ports():
 
     print('Available serial ports:')
     for i in range(len(result)):
-        print('['+str(i+1)+'] ' + str(result[i]))
+        print('[' + str(i + 1) + '] ' + str(result[i]))
 
     port_name_list = []
 
@@ -44,7 +44,7 @@ def serial_ports():
     ArduinoPort = ArduinoPort.split(',')
     # nDetectors = len(ArduinoPort)
     for i in range(len(ArduinoPort)):
-        port_name_list.append(str(result[int(ArduinoPort[i])-1]))
+        port_name_list.append(str(result[int(ArduinoPort[i]) - 1]))
 
     print(" ")
 
@@ -53,12 +53,14 @@ def serial_ports():
 
 class Detector:
     def __init__(self):
-        self.port_name = 'Port undefined'
+        self.port_name = None
         self.port = None
         self.layer = -1
         self.name = 'Name not initialized'
         self.type = 'Master or Slave?'
         self.pos = [-999, -999, -999]
+        self.count = 0
+        self.muon_count = 0
 
     def set_port(self, name, serialport):
         self.port_name = name
@@ -81,59 +83,31 @@ class Detector:
         return self.port.readline().replace(b'\r\n', b'').decode('utf-8')
 
     def info(self):
-        print('--', self.name, self.type, self.pos, self.layer, self.port_name)
-
-    def get_layer(self):
-        return int(self.layer)
-
-    def get_pos(self):
-        return self.pos
-
-
-class Layer:
-    def __init__(self, index):
-        self.detectors = []
-        self.index = index
-
-    def add_detector(self, det):
-        self.detectors.append(det)
-
-    def remove_detector(self, det):
-        self.detectors.remove(det)
+        res = '{} {} {} {} {}'.format(self.layer,
+                                      self.type,
+                                      self.pos,
+                                      self.port_name,
+                                      self.name)
+        return res
 
 
 class Grid:
     def __init__(self):
-        self.layers = []
-        self.nLayers = 0
-
-    def add_layer(self, lay):
-        self.layers.append(lay)
-        self.nLayers += 1
+        self.detectors = []
 
     def info(self):
-        for l in self.layers:
-            print("Layer ", l.index)
-            for d in l.detectors:
-                d.info()
-
-    def get_layer(self, index):
-        return self.layers[index]
-
-    def get_detector_list(self):
-        result = []
-        for lay in self.layers:
-            for det in lay.detectors:
-                result.append(det)
-        return result
-
+        s = ''
+        for d in self.detectors:
+            s += d.info() + '\n'
+        return s
 
     def plot(self, show=True):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         colors = ["orange", "blue", "red", "yellow"]
-        for d in self.get_detector_list():
-            ax.plot([d.pos[0]], [d.pos[1]], [d.pos[2]], markerfacecolor=colors[d.get_layer()], markeredgecolor=colors[d.get_layer()], marker='o', markersize=8, alpha=0.8)
+        for d in self.detectors:
+            ax.plot([d.pos[0]], [d.pos[1]], [d.pos[2]], markerfacecolor=colors[d.layer],
+                    markeredgecolor=colors[d.layer], marker='o', markersize=8, alpha=0.8)
             ax.text(d.pos[0], d.pos[1], d.pos[2], d.name, size=10, color='k')
         ax.invert_zaxis()
         if show:
@@ -141,13 +115,15 @@ class Grid:
         return ax
 
     def remove_undefined_detectors(self):
-        for lay in self.layers:
-            for d in lay.detectors:
-                if d.port_name == 'Port undefined':
-                    print('\nRemoved this detector, port undefined!')
-                    d.info()
-                    print(' ')
-                    lay.remove_detector(d)
+        to_remove = []
+        print('\nChecking detectors that are not connected...')
+        for d in self.detectors:
+            if d.port_name is None:
+                to_remove.append(d)
+
+        for d in to_remove:
+            print('Removed ', d.name)
+            self.detectors.remove(d)
 
 
 class Stack:
@@ -182,25 +158,79 @@ class Stack:
 class Signal:
     def __init__(self, data, detector, time, timediff):
         data = data.split(' ')
+        #   0               1                   2
+        # count + " [" + countslave + "] " + time_stamp + " " +
+        #  3            4                       5
+        # adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " +
+        #   6                       7                   8                   9
+        # temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
         self.detector = detector
         self.time = time
         self.timediff = timediff
         self.adc = data[3]
         self.volt = data[4]
+        self.temp = data[6]
         self.muon = False
         self.count = int(data[0])
+        detector.count += 1
 
     def set_muon(self):
         self.muon = True
 
-        # count + " [" + countslave + "] " + time_stamp + " " + adc +
-        # " " + sipm_voltage + " " + measurement_deadtime + " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name
-
     def info(self):
-        s = '   ' + self.detector.name + ' ' + str(self.time) + ' ' + str(self.adc) + ' ' + str(self.volt) + ' ' + str(self.timediff)
-        return s
+        string = '{} {} {} {} {} {} {} {} {}'.format(self.detector.layer,
+                                                     self.adc,
+                                                     self.volt,
+                                                     self.temp,
+                                                     self.timediff,
+                                                     self.time,
+                                                     self.detector.muon_count,
+                                                     self.detector.count,
+                                                     self.detector.name)
+        return string
 
     def write(self, f):
         f.write(self.info() + '\n')
         f.flush()
 
+
+class Muon:
+    def __init__(self):
+        self.signals = []
+        self.layers = []
+        self.detectors = []
+
+    def add_signal(self, sig):
+        self.signals.append(sig)
+
+        def sortkey(s):
+            return s.detector.layer
+
+        self.signals.sort(key=sortkey)
+        self.layers.append(sig.detector.layer)
+        self.detectors.append(sig.detector)
+        sig.detector.muon_count += 1
+
+    def peek(self, i=0):
+        return self.signals[len(self.signals) - i - 1]
+
+    def write(self, f):
+        for s in self.signals:
+            f.write(s.info() + '\n')
+        f.write('\n')
+        f.flush()
+
+    def print(self):
+        for s in self.signals:
+            print(s.info())
+
+    def not_empty(self):
+        if len(self.signals) == 0:
+            return False
+        else:
+            return True
+
+    def reset(self):
+        self.signals = []
+        self.layers = []
+        self.detectors = []

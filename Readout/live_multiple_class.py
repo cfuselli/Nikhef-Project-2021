@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import serial
 from datetime import datetime
-import sys, glob
+import sys, os, shutil
 import time
 import configparser
 import serial.tools.list_ports
 
-from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Layer, Stack
+from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 from Readout.cosmic_watch.class_module import serial_ports
 
 print(" ")
@@ -18,13 +18,9 @@ config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
 config.read('setup.ini')
 config_detectors = list(config.items(section='DETECTORS'))
-nLayers = int(config['INFO']['nLayers'])
 
-# creating a grid, adding the layers (probably 3)
+
 grid = Grid()
-for i in range(nLayers):
-    layer = Layer(i)
-    grid.add_layer(layer)
 
 # creating the detectors (but still not connected to ports)
 for el in config_detectors:
@@ -33,35 +29,83 @@ for el in config_detectors:
     pos = [float(item) for item in pos]
     d.set_pos(pos)
     d.set_name(el[0])
-    grid.layers[d.get_layer()].add_detector(d)
-grid.info()
+    grid.detectors.append(d)
+print(grid.info())
 
 
 # connect detectors and ports based on name
 port_name_list = serial_ports()
+noname = True
 for port_name in port_name_list:
     conn = serial.Serial(port=port_name, baudrate=9600, timeout=None)
     while True:
         if conn.inWaiting():
             data = conn.readline().replace(b'\r\n', b'').decode('utf-8').split(',')
-            for d in grid.get_detector_list():
-                if d.name == data[0].lstrip():
+            if data[0].lstrip() != 'OLED_M_S':
+                print('Detector in port ', port_name, ' does not have OLED_M_S.ino installed!')
+                break
+            for d in grid.detectors:
+                noname = True
+                if d.name == data[1].lstrip():
                     d.set_port(port_name, conn)
-                    d.set_type(data[1].lstrip())
-                    print('Connected to detector: ', d.name)
+                    d.set_type(data[2].lstrip())
+                    print('Connected to detector: ', d.name, port_name)
+                    noname = False
                     break
+            if noname:
+                print('No detector name found for this port ', port_name, data)
             break
 
 
 # remove detectors for which we did not find a port
 grid.remove_undefined_detectors()
+if len(grid.detectors) == 0:
+    sys.exit('No detectors correctly connected, program ended')
 
-grid.info()
-ax = grid.plot(show=True)
+print('\nGrid configuration:\n')
 
 
-file = open('output_data.txt', "w")
-file.write('# count detector.name time adc volt timediff\n')
+def sortkey(dd):
+    return dd.layer
+
+
+grid.detectors.sort(key=sortkey)
+print(grid.info())
+ax = grid.plot(show=False)
+
+
+signals_per_file = int(config['INFO']['signals_per_file'])
+signals_per_control_file = int(config['INFO']['signals_per_control_file'])
+
+file_number = 0
+control_file_number = 0
+
+today = datetime.today()
+strx = today.strftime("%Y-%m-%d_%H-%M")
+
+folder_name = 'output_' + strx
+try:
+    shutil.rmtree(folder_name)
+except:
+    print('New folder ', folder_name, ' created')
+os.makedirs(folder_name)
+
+
+grid_file = open(folder_name + '/grid_setup.txt', "w")
+file = open(folder_name + '/output_data%i.txt' % file_number, "w")
+control_file = open(folder_name + '/output_master_control%i.txt' % file_number, "w")
+
+grid_file.write(datetime.today().ctime() + '\n')
+grid_file.write(grid.info())
+grid_file.close()
+
+header = '# layer adc volt temp timediff time detector_muon_count detector_count detector_name\n'
+
+file.write(header)
+control_file.write(header)
+
+muon_count = 0
+signal_control_count = 0
 
 print("\nStart reading data\n")
 
@@ -70,13 +114,14 @@ print("\nStart reading data\n")
 # Not sure this is smart but made sense at some point
 t_end = time.time() + 2
 while time.time() < t_end:
-    for detector in grid.get_detector_list():
+    for detector in grid.detectors:
         if detector.port.inWaiting():
             data = detector.readline()
 
 # Start loop of data taking
+muon = Muon()
 while True:
-    for detector in grid.get_detector_list():
+    for detector in grid.detectors:
         if detector.port.inWaiting():
             now = datetime.now()
             data = detector.readline()
@@ -93,26 +138,37 @@ while True:
             signal = Signal(data, detector, now, timediff)
             stack.push(signal)
 
+            signal.write(control_file)
+            signal_control_count += 1
+
+            if signal_control_count % signals_per_control_file == 0:
+                control_file_number += 1
+                control_file = open(folder_name + '/output_master_control%i.txt' % control_file_number, "w")
+                control_file.write(header)
+
             # if last signal is close in time, then maybe it's a muon
-            # we also do not want a muon to pass two times in the same detector
-            if timediff < 0.05 and stack.isEmpty() is False and detector is not stack.peek(1).detector:
+            # we do not want a muon to pass two times in the same layer
+            if timediff < 0.05 and stack.isEmpty() is False:
+                if detector.layer not in muon.layers and detector.layer != stack.peek(1).detector.layer:
+                    # if the signal before was targeted as muon, then this is still part of the same muon
+                    if muon.not_empty():
+                        muon.add_signal(signal)
 
-                # if the signal before was targeted as muon, then this is still part of the same muon
-                if stack.peek(1).muon:
-                    if detector is not stack.detectors:
-                        signal.set_muon()
-                        signal.write(file)
-                        print(signal.info())
+                    # if not, we create a 'new muon'
+                    else:
+                        muon.add_signal(signal)
+                        muon.add_signal(stack.peek(1))
 
-                # if not, we create a 'new muon signal'
-                else:
-                    file.write('>>>> Start muon\n')
-                    print('>>>> Start muon')
-                    stack.peek(1).set_muon()
-                    signal.set_muon()
+            else:
+                if muon.not_empty():
+                    muon_count += 1
+                    print('-- %i Muon(s) detected --' % muon_count)
+                    muon.print()
+                    muon.write(file)
 
-                    stack.peek(1).write(file)
-                    signal.write(file)
+                    if muon_count % signals_per_file == 0:
+                        file_number += 1
+                        file = open(folder_name + '/output_data%i.txt' % file_number, "w")
+                        file.write(header)
 
-                    print(signal.info())
-                    print(stack.peek(1).info())
+                muon.reset()
