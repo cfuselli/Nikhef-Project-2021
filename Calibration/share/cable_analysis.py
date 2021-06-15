@@ -21,9 +21,10 @@ parser.add_argument('-out_name',type=str,default=None,required=False,
                     help='calibration constants')
 parser.add_argument('-out_path',type=str,default='../data/calibration/',required=False,
                     help='default ../data/calibration/')
-parser.add_argument('-header',type=int,default=2,required=False,
-                    help='default 2')
-                    
+parser.add_argument('-header',type=int,default=3,required=False,
+                    help='default 3')
+parser.add_argument('-dist',type=str,default="cable",required=False,
+                    help='distinction keyword for classes eg. "cable" (default)')
 args = parser.parse_args()
 
 
@@ -47,11 +48,12 @@ def polyfit(xdata,ydata,p0=None,rank=11):
 
 def make_hist(id,data,xname,bins=256,range=(0,1023),label=None,alpha=0.5):
     plt.figure(id)
-    plt.hist(data,bins=bins,range=range,alpha=alpha,label=label)
+    plt.hist(data,bins=bins,range=range,density=True,alpha=alpha,label=label)
     plt.xlabel(xname)
     plt.ylabel('Entries')
     if label is not None: plt.legend()
 
+DISTINCTION = args.dist
 
 # read in the data
 files = args.f
@@ -78,7 +80,7 @@ for f in files:
         
     print(len(timestamp),len(adc),len(timediff))
     
-    if 'cable' in f: 
+    if DISTINCTION in f: 
         adc_scint.extend(adc)
         timediff_scint.extend(timediff)
     else:
@@ -88,11 +90,11 @@ for f in files:
     make_hist(1,adc,'ADC',label=f,bins=128)
     make_hist(2,timediff,'Time diff [s]',label=f,range=(0,60),bins=60)
  
-make_hist(3,adc_cable,'ADC',label='tot cable',bins=128)
-make_hist(3,adc_scint,'ADC',label='tot scintillator',bins=128)
+make_hist(3,adc_cable,'ADC',label='total %s'%DISTINCTION,bins=128)
+make_hist(3,adc_scint,'ADC',label='total NOT %s'%DISTINCTION,bins=128)
 
-make_hist(4,timediff_cable,'Time diff [s]',label='tot cable',range=(0,60),bins=60)
-make_hist(4,timediff_scint,'Time diff [s]',label='tot scint',range=(0,60),bins=60)
+make_hist(4,timediff_cable,'Time diff [s]',label='total %s'%DISTINCTION,range=(0,60),bins=60)
+make_hist(4,timediff_scint,'Time diff [s]',label='total NOT %s'%DISTINCTION,range=(0,60),bins=60)
 
 
 # close the plot when pressing a key
