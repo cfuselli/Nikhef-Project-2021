@@ -67,7 +67,7 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             =  0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             =  1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
