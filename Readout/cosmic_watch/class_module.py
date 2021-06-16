@@ -165,8 +165,7 @@ class Stack:
 
 
 class Signal:
-    def __init__(self, data, detector, time, timediff):
-        data = data.split(' ')
+    def __init__(self, detector):
         #   0               1                   2
         # count + " [" + countslave + "] " + time_stamp + " " +
         #  3            4                       5
@@ -174,17 +173,20 @@ class Signal:
         #   6                       7                   8                   9
         # temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
         self.detector = detector
-        self.time = time
-        self.timediff = timediff
+        self.time = 0
+        self.timediff = 0
+        self.adc = 0
+        self.volt = 0
+        self.temp = 0
+        self.count = 0
+        detector.count += 1
+
+    def set_data(self, data):
+        data = data.split(' ')
         self.adc = data[3]
         self.volt = data[4]
         self.temp = data[6]
-        self.muon = False
         self.count = int(data[0])
-        detector.count += 1
-
-    def set_muon(self):
-        self.muon = True
 
     def info(self):
         string = '{} {} {} {} {} {} {} {} {}'.format(self.detector.layer,

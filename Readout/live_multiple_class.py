@@ -5,9 +5,14 @@ import sys, os, shutil
 import time
 import configparser
 import serial.tools.list_ports
+import schedule
 
-from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
-from cosmic_watch.class_module import serial_ports
+# I don't know why this works on the computer of the lab but not on my MacBook (Carlo)
+# from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
+# from cosmic_watch.class_module import serial_ports
+
+from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
+from Readout.cosmic_watch.class_module import serial_ports
 
 print(" ")
 
@@ -135,7 +140,11 @@ while True:
                 timediff = 10
 
             # create a signal
-            signal = Signal(data, detector, now, timediff)
+            signal = Signal(detector)
+            signal.time = now
+            signal.timediff = timediff
+            signal.set_data(data)
+
             stack.push(signal)
 
             signal.write(control_file)
