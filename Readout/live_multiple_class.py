@@ -168,6 +168,7 @@ while True:
 
                     if muon_count % signals_per_file == 0:
                         file_number += 1
+                        file.close()
                         file = open(folder_name + '/output_data%i.txt' % file_number, "w")
                         file.write(header)
                         tnow = datetime.now()
