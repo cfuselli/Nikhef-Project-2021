@@ -5,7 +5,7 @@ import sys, glob
 import time
 import configparser
 import serial.tools.list_ports
-
+import numpy as np
 
 def serial_ports():
     """ Lists serial port names
@@ -56,9 +56,10 @@ class Detector:
         self.port_name = None
         self.port = None
         self.layer = -1
-        self.name = 'Name not initialized'
-        self.type = 'Master or Slave?'
+        self.name = 'Name_not_initialized'
+        self.type = 'Master_or_Slave?'
         self.pos = [-999, -999, -999]
+        self.dimensions = [-999, -999, -999]
         self.count = 0
         self.muon_count = 0
 
@@ -66,36 +67,25 @@ class Detector:
         self.port_name = name
         self.port = serialport
 
-    def set_layer(self, layer_num):
-        self.layer = int(layer_num)
-
-    def set_name(self, dname):
-        self.name = dname
-
-    def set_type(self, t):
-        self.type = t
-
-    def set_pos(self, _pos):
-        self.pos = _pos
-        self.layer = int(_pos[2])
-
     def readline(self):
         return self.port.readline().replace(b'\r\n', b'').decode('utf-8')
 
     def info(self, counts=False):
-        res = '{} {} {} {} {}'.format(self.layer,
-                                      self.type,
-                                      self.pos,
-                                      self.port_name,
-                                      self.name)
+        res = '{} {} {} {} {} {}'.format(self.layer,
+                                         self.type,
+                                         self.pos,
+                                         self.dimensions,
+                                         self.port_name,
+                                         self.name)
         if counts:
-            res = '{} {} {} {} {} {} {}'.format(self.layer,
-                                                self.type,
-                                                self.pos,
-                                                self.port_name,
-                                                self.name,
-                                                self.count,
-                                                self.muon_count)
+            res = '{} {} {} {} {} {} {} {}'.format(self.layer,
+                                                   self.type,
+                                                   self.pos,
+                                                   self.dimensions,
+                                                   self.port_name,
+                                                   self.name,
+                                                   self.count,
+                                                   self.muon_count)
 
         return res
 
@@ -110,18 +100,34 @@ class Grid:
             s += d.info() + '\n'
         return s
 
-    def plot(self, show=True):
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+    def plot(self, ax, show=True):
         colors = ["orange", "blue", "red", "yellow"]
+        ax.set_xlabel('$X$')
+        ax.set_ylabel('$Y$')
+        ax.set_zlabel('$Z$')
+
+        def get_cube(center, dist):
+            cx, cy, cz = center[0], center[1], center[2]
+            dx, dy, dz = dist[0], dist[1], dist[2]
+
+            phi = np.arange(1, 10, 2) * np.pi / 4
+            Phi, Theta = np.meshgrid(phi, phi)
+
+            x = cx + np.cos(Phi) * np.sin(Theta) * dx
+            y = cy + np.sin(Phi) * np.sin(Theta) * dy
+            z = cz + np.cos(Theta) / np.sqrt(2) * dz
+            return x, y, z
+
         for d in self.detectors:
             ax.plot([d.pos[0]], [d.pos[1]], [d.pos[2]], markerfacecolor=colors[d.layer],
                     markeredgecolor=colors[d.layer], marker='o', markersize=8, alpha=0.8)
             ax.text(d.pos[0], d.pos[1], d.pos[2], d.name, size=10, color='k')
+            x, y, z = get_cube(d.pos, d.dimensions)
+            ax.plot_surface(x, y, z, color=colors[d.layer], alpha=0.1)
         ax.invert_zaxis()
+
         if show:
             plt.show()
-        return ax
 
     def remove_undefined_detectors(self):
         to_remove = []
@@ -245,3 +251,12 @@ class Muon:
         self.signals = []
         self.layers = []
         self.detectors = []
+
+    def plot(self, ax):
+
+        x = [self.signals[0].detector.pos[0], self.signals[1].detector.pos[0]]
+        y = [self.signals[0].detector.pos[1], self.signals[2].detector.pos[1]]
+        z = [self.signals[0].detector.pos[2], self.signals[2].detector.pos[2]]
+
+        # Connect the first two points in the array
+        ax.plot(x, y, z)

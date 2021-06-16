@@ -13,11 +13,13 @@ import matplotlib.animation
 import os
 import numpy as np
 import regex as re
+import matplotlib.animation as animation
+
 
 from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 from Readout.cosmic_watch.class_module import serial_ports
 
-folder_name = 'output_2021-06-14_18-01'
+folder_name = 'output_2021-06-16_15-30'
 file = open(folder_name + '/grid_setup.txt', 'r')
 
 grid = Grid()
@@ -33,32 +35,42 @@ for i, line in enumerate(file.readlines()):
         line = line.replace('\n', '')
         line = line.replace(',', '')
         line = line.replace(']', '').split(' ')
-        pos = [float(line[2]), float(line[3]), int(float(line[4]))]
-        d.set_pos(pos)
-        d.set_name(line[6])
-        d.set_type(line[1])
+        pos = [float(line[2]), float(line[3]), float(line[4])]
+        dim = [float(line[5]), float(line[6]), float(line[7])]
+        d.pos = pos
+        d.dimensions = dim
+        d.name = line[9]
+        d.type = line[1]
+        d.layer = int(line[0])
         grid.detectors.append(d)
 
 print(grid.info())
-grid.plot(show=False)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ln, = plt.plot([], [], [])
+
+def init():
+    grid.plot(ax, show=False)
 
 file.close()
 
-file_number = 0
-file = open(folder_name + '/output_data%i.txt' % file_number, "r")
-header = file.readline()
-print(header)
+
 
 muon = Muon()
 
-while True:
+def update(i):
+    file_number = 0
+    file = open(folder_name + '/output_data%i.txt' % file_number, "r")
+    header = file.readline()
+    print(header)
     if os.path.exists(folder_name + '/output_data%i.txt' % (file_number + 1)):
         file.close()
         file_number += 1
         file = open(folder_name + '/output_data%i.txt' % file_number, "r")
         header = file.readline()
         print('Reading file ' + folder_name + '/output_data%i.txt' % file_number)
-        continue
+        print(header)
 
     where = file.tell()
     line = file.readline()
@@ -75,23 +87,40 @@ while True:
                     det = d
                     break
             if det == 0:
-                exit('Unknown detector found')
+                strin = 'Unknown detector found ' + lsplit[-1]
+                exit(strin)
 
             signal = Signal(det)
-            signal.adc = int(lsplit[1])
-            signal.volt = float(lsplit[2])
-            signal.temp = float(lsplit[3])
-            datetime_object = datetime.strptime(lsplit[5] + ' ' + lsplit[6], '%Y-%m-%d %H:%M:%S.%f')
-            signal.time = datetime_object
-            signal.timediff = float(lsplit[4])
+            try:
+                signal.adc = int(lsplit[1])
+                signal.volt = float(lsplit[2])
+                signal.temp = float(lsplit[3])
+                datetime_object = datetime.strptime(lsplit[5] + ' ' + lsplit[6], '%Y-%m-%d %H:%M:%S.%f')
+                signal.time = datetime_object
+                signal.timediff = float(lsplit[4])
+            except:
+                print('')
             muon.add_signal(signal)
             line = file.readline()
 
         print(' ----> Muon')
         muon.print()
+        muon.plot(ax)
+        if muon.signals[1].detector.dimensions[0] > muon.signals[1].detector.dimensions[1]:
+            fx = muon.signals[1].detector.pos[0]
+            fy = muon.signals[2].detector.pos[1]
+        else:
+            fx = muon.signals[2].detector.pos[0]
+            fy = muon.signals[1].detector.pos[1]
+        print(muon.signals[1].detector.pos, muon.signals[2].detector.pos)
+        print(muon.signals[1].detector.dimensions, muon.signals[2].detector.dimensions)
+        print(fx, fy)
+
         muon.reset()
 
 
+ani = animation.FuncAnimation(fig, update, interval=1000)
+plt.show()
 
 
 '''

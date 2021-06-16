@@ -1,10 +1,8 @@
 Mon Jun 14 18:01:02 2021
-1 MASTER [1.0, 0.0, 1.0] /dev/ttyUSB3 Franko
-2 SLAVE [1.0, 1.0, 2.0] /dev/ttyUSB1 Niels
-2 SLAVE [1.0, 0.0, 2.0] /dev/ttyUSB0 Cecile
-3 SLAVE [0.0, 0.0, 3.0] /dev/ttyUSB6 CarloCosmicWatch
-3 SLAVE [0.0, 0.0, 3.0] /dev/ttyUSB2 Noor
-3 SLAVE [1.0, 0.0, 3.0] /dev/ttyUSB5 rens
-3 SLAVE [1.0, 2.0, 3.0] /dev/ttyUSB4 ZenBenMaster
-
-Ciaociao
+0 MASTER [0.0, 0.0, 0.0] [2, 2, 0.1] /dev/ttyUSB3 Franko
+1 SLAVE [-1.0, 0.0, 1.0] [1, 3, 0.1] /dev/ttyUSB1 Niels
+1 SLAVE [0.0, 0.0, 1.0] [1, 3, 0.1] /dev/ttyUSB0 Cecile
+1 SLAVE [1.0, 0.0, 1.0] [1, 3, 0.1] /dev/ttyUSB6 CarloCosmicWatch
+2 SLAVE [0.0, -1.0, 1.1] [3, 1, 0.1] /dev/ttyUSB2 Noor
+2 SLAVE [0.0, 0.0, 1.1] [3, 1, 0.1] /dev/ttyUSB5 rens
+2 SLAVE [0.0, 1.0, 1.1] [3, 1, 0.1] /dev/ttyUSB4 ZenBenMaster
