@@ -61,7 +61,7 @@ while True:
         tread = time.time() # timestamp
         
         savefile.write("%s, %s \n"%(tread-tstart,data)) # save
-        print("%i, %.2f, %s"%(i,tread-tstart,data))
+        print("%i, %.2f, %s"%(i+1,tread-tstart,data))
         
         time.sleep(args.pause)
         i+=1   

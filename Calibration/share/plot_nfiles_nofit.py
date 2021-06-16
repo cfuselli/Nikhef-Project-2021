@@ -33,6 +33,8 @@ parser.add_argument('-nfiles',type=str,default='2',required=False,
 # output file
 parser.add_argument('-header',type=int,default=1,required=False,
                     help='default 1')
+parser.add_argument('-plotname',type=str,default='plot',required=False,
+                    help='Plot name if file names fails')
 
 args = parser.parse_args()
 
@@ -87,7 +89,10 @@ plt.legend()
 
 # close the plot when pressing a key
 plt.draw()
-plt.savefig("%s_%s.png"%(args.nfiles, args.list))
+try:
+    plt.savefig("%s_%s.png"%(args.nfiles, args.list))
+except:
+    plt.savefig("%s.png"%args.plotname)
 plt.pause(1)
 input('press any key to close')
 plt.close(fig)
