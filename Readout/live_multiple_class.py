@@ -30,13 +30,16 @@ grid = Grid()
 # creating the detectors (but still not connected to ports)
 for el in config_detectors:
     d = Detector()
-    pos = el[1].split(',')
-    pos = [float(item) for item in pos]
-    d.set_pos(pos)
-    d.set_name(el[0])
+    p = el[1].split(',')
+    lay = int(p[0])
+    pos = [p[1], p[2], p[3]]
+    dim = [p[4], p[5], p[6]]
+    d.pos = pos
+    d.dimensions = dim
+    d.layer = lay
+    d.name = el[0]
     grid.detectors.append(d)
 print(grid.info())
-
 
 # connect detectors and ports based on name
 port_name_list = serial_ports()
@@ -53,7 +56,7 @@ for port_name in port_name_list:
                 noname = True
                 if d.name == data[1].lstrip():
                     d.set_port(port_name, conn)
-                    d.set_type(data[2].lstrip())
+                    d.type = data[2].lstrip()
                     print('Connected to detector: ', d.name, port_name)
                     noname = False
                     break
@@ -76,7 +79,9 @@ def sortkey(dd):
 
 grid.detectors.sort(key=sortkey)
 print(grid.info())
-ax = grid.plot(show=False)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax = grid.plot(ax, show=False)
 
 
 signals_per_file = int(config['INFO']['signals_per_file'])
@@ -169,7 +174,7 @@ while True:
                         muon.add_signal(stack.peek(1))
 
             else:
-                if muon.not_empty():
+                if muon.not_empty() and len(muon.signals) == 3:
                     muon_count += 1
                     print('-- %i Muon(s) detected --' % muon_count)
                     muon.print()
@@ -180,6 +185,8 @@ while True:
                         file.close()
                         file = open(folder_name + '/output_data%i.txt' % file_number, "w")
                         file.write(header)
+                        file.flush()
+
                         tnow = datetime.now()
                         tdelta = datetime.now() - start
                         grid_file.write('\n' + tnow.ctime() + '(' + str(tdelta) + ')\n')
