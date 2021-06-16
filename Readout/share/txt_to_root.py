@@ -1,5 +1,6 @@
 # convert all .txt in folder to single root file
-# based on https://root.cern.ch/doc/v612/staff_8py.html by Wim Lavrijsen 
+# based on https://root.cern.ch/doc/v612/staff_8py.html by Wim Lavrijsen
+# and https://gist.github.com/raggleton/0686060ed1e94894c9cf
 
 #import re, array, os
 import os
@@ -81,7 +82,7 @@ def readFiles(files, path=args.path):
     detector_muon_count, detector_count = array('i', [0.]), array('i', [0.])
     detector_name = array('s', [0.])
     
-    # create branches
+    # create branches FIXME
     
     tree.Branch( 'layers', layer, 'layer/I')
     tree.Branch( 'adc', adc, 'adc/I') # each one for MASTER X, Y, ...?
@@ -99,7 +100,7 @@ def readFiles(files, path=args.path):
         f_in = open('%s%s'%(path,f))
         for line in f_readlines():
             
-            output.adc == tree.Fill()
+            output.adc == tree.Fill() # how to group events FIXME
             
             if line = '': print()
     
