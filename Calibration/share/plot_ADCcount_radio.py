@@ -49,3 +49,4 @@ def get_data(fname):
     plt.hist(adc)
     plt.savefig("adc_radioactive_histogram.png")
     return peak, adc_hist
+get_data(fname)
