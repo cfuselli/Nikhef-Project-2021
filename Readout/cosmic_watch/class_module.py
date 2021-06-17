@@ -6,6 +6,8 @@ import time
 import configparser
 import serial.tools.list_ports
 import numpy as np
+import random
+
 
 def serial_ports():
     """ Lists serial port names
@@ -172,15 +174,10 @@ class Stack:
 
 class Signal:
     def __init__(self, detector):
-        #   0               1                   2
-        # count + " [" + countslave + "] " + time_stamp + " " +
-        #  3            4                       5
-        # adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " +
-        #   6                       7                   8                   9
-        # temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
         self.detector = detector
         self.time = 0
         self.timediff = 0
+        self.uptime = 0
         self.adc = 0
         self.volt = 0
         self.temp = 0
@@ -188,6 +185,12 @@ class Signal:
         detector.count += 1
 
     def set_data(self, data):
+        #   0               1                   2
+        # count + " [" + countslave + "] " + time_stamp + " " +
+        #  3            4                       5
+        # adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " +
+        #   6                       7                   8                   9
+        # temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
         data = data.split(' ')
         self.adc = data[3]
         self.volt = data[4]
@@ -195,15 +198,16 @@ class Signal:
         self.count = int(data[0])
 
     def info(self):
-        string = '{} {} {} {} {} {} {} {} {}'.format(self.detector.layer,
-                                                     self.adc,
-                                                     self.volt,
-                                                     self.temp,
-                                                     self.timediff,
-                                                     self.time,
-                                                     self.detector.muon_count,
-                                                     self.detector.count,
-                                                     self.detector.name)
+        string = '{} {} {} {} {} {} {} {} {} {}'.format(self.detector.layer,
+                                                        self.adc,
+                                                        self.volt,
+                                                        self.temp,
+                                                        self.timediff,
+                                                        self.time,
+                                                        self.detector.muon_count,
+                                                        self.detector.count,
+                                                        self.detector.name,
+                                                        self.uptime)
         return string
 
     def write(self, f):
@@ -254,9 +258,15 @@ class Muon:
 
     def plot(self, ax):
 
-        x = [self.signals[0].detector.pos[0], self.signals[1].detector.pos[0]]
-        y = [self.signals[0].detector.pos[1], self.signals[2].detector.pos[1]]
+        r = min(self.signals[1].detector.pos[0], self.signals[1].detector.pos[1]) / 2
+        rx = random.uniform(-r, r)
+        ry = random.uniform(-r, r)
+        x = [self.signals[0].detector.pos[0] + rx, self.signals[1].detector.pos[0] + ry]
+        rx = random.uniform(-r, r)
+        ry = random.uniform(-r, r)
+        y = [self.signals[0].detector.pos[1] + rx, self.signals[2].detector.pos[1] + ry]
         z = [self.signals[0].detector.pos[2], self.signals[2].detector.pos[2]]
 
         # Connect the first two points in the array
-        ax.plot(x, y, z)
+        line = ax.plot(x, y, z, alpha=0.98)
+        return line
