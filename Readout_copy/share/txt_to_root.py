@@ -1,38 +1,39 @@
 # convert all .txt in folder to single root file
 # based on https://root.cern.ch/doc/v612/staff_8py.html by Wim Lavrijsen
 # and https://gist.github.com/raggleton/0686060ed1e94894c9cf
+#
+# @haslbeck
+# 18 June 2021 
 
 #import re, array, os
 import os
 
-#import ROOT
+import ROOT
 #from ROOT import TFile, TTree, gROOT, AddressOf
 import argparse
-import array
+from array import array
 from natsort import natsorted # for file name sorting
 from sys import exit
 
 # parse path
 parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
-parser.add_argument('-path', type=str, required = True,
-                    help='relative path to txt files to be read in.')
-parser.add_argument('-ignore', nargs='+', default = 'setup',
-                    help='file name patterns to ignore.')
-parser.add_argument('-filetype', type=str, default = '.txt',
-                    help='Filetype to read in.')
+parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
+parser.add_argument('-ignore', nargs='+',default = ['setup'], help='file name patterns to ignore.')
+parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
 
 args = parser.parse_args()
 path = args.path
 
 
 
-def getFileNames(path, ignore=args.ignore,filetype=args.filetype, verbose=True):
+def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
+    """ get all file names in given path according to some criteria, requires feeback by user """
     
     files = os.listdir(path) # get file names
     files = [f for f in files if filetype in f] # only consider files of corect type
     for ign in ignore: files = [f for f in files if ign not in f] # remove files with ignore key
     files = natsorted(files, key=lambda y: y.lower()) # natural sort of file names
-    
+
     print("read in files at %s ... ?"%path)
     for f in files: print("%s"%f)
     
@@ -43,87 +44,91 @@ def getFileNames(path, ignore=args.ignore,filetype=args.filetype, verbose=True):
         else: continue
         
     return files
-   
-    
-#print(files)
 
-## A C/C++ structure is required, to allow memory based access
-'''
-gROOT.ProcessLine(
-"struct staff_t {\
-   Int_t      layer;\
-   Int_t      adc;\
-   Float_t    volt;\
-   Float_t    temp;\
-   Float_t    timediff;\
-   Float_t    time;\
-   Int_t      detector_muon_count;\
-   Int_t      detector_count;\
-   String     detector_name;\
-};" );
-'''
-# Text_t ?
+def getSetup(path, filetye=args.filetype, name = 'grid_setup'):
+    """ extract the used detectors from grid_setup.txt file """
+    setup = []
+    f = open("%s%s.txt"%(path,name))
+    for line in f.readlines():
+        line = line.split(' ')
+        if len(line) <= 1 : break
+        # store layer
+        layer , name = line[0], line[-1][:-1]  # dont store '\n'
+        setup.append("%s_%s"%(name,layer))
+    f.close()
+    # remove date
+    setup = setup[1:]
+    return setup
+        
+#Text_t
 
 
 
-def readFiles(files, path=args.path):
+def readFiles(files, setup, path=args.path, verbose = True):
     """ read in txt files and fill ROOT tree """
     
     
     # create ROOT file
-    root_file = TFile("%s/output.root"%path, 'RECREATE' )
+    root_file = ROOT.TFile("%s/output.root"%path, 'RECREATE' )
     
     # create tree
-    tree = TTree('output', 'output for folder %s'%path)
+    tree = ROOT.TTree('output', 'output for folder %s'%path)
     
     # pointers
-    layer, adc = array('i', [0.]), array('i', [0.])
-    volt, temp, timediff, time = array('f', [0.]), array('f', [0.]), array('f', [0.]), array('f', [0.])
-    detector_muon_count, detector_count = array('i', [0.]), array('i', [0.])
-    detector_name = array('s', [0.])
+    number, time, timediff, temp = array('i', [0]), array('f', [0.]), array('f', [0.]), array('f', [0.])
+    adcs = {detector: array('f', [0.]) for detector in setup}
     
-    # create branches FIXME
+    # create branches 
     
-    tree.Branch( 'layers', layer, 'layer/I')
-    tree.Branch( 'adc', adc, 'adc/I') # each one for MASTER X, Y, ...?
-    tree.Branch( 'volt', volt, 'volt/F')
-    tree.Branch( 'temp', temp, 'temp/F')
+    tree.Branch( 'number', number, 'number/I')
     tree.Branch( 'timediff', timediff, 'timediff/F')
     tree.Branch( 'time', time, 'time/F')
-    tree.Branch( 'detector_muon_count', detector_muon_count, 'detector_muon_count/I')
-    tree.Branch( 'detector_count', detector_count, 'detector_count/I')
-    tree.Branch( 'detector_name', detector_name, 'detector_name/I')
+    tree.Branch( 'temp', temp, 'temp/F')
+
+    for (detector, pointer) in adcs.items():
+        print("%s/F"%detector)
+        tree.Branch(detector, pointer, "%s/F"%detector)
+    print("Created branches...")
+    
     
     # iterate over all files
-    for f in files:
-        
+    for nf, f in enumerate(files):
+
+        # open file
+        print('Processing %s (%i/%i)'%(f,nf+1,len(files)))
         f_in = open('%s%s'%(path,f))
+        f_in.readline()  # skip header
+
+        # read data
+        i = 1
         for line in f_readlines():
+            line  = line.split(' ')
+            print(line)
+
+            # fill tree for each event
+            if len(line) == 1:
+                number[0] = i
+                tree.Fill()
+                for detector in adcs: adcs[detector][0] = 0.
+                i += 1    
             
-            output.adc == tree.Fill() # how to group events FIXME
+            layer, name = line[0], line[-1]
             
-            if line = '': print()
-    
- 
-    for line in open(fname).readlines():
-        t = list(filter( lambda x: x, re.split( '\s+', line ) ) )
-        staff.Category = int(t[0])             # assign as integers
-        staff.Flag     = int(t[1])
-        staff.Age      = int(t[2])
-        staff.Service  = int(t[3])
-        staff.Children = int(t[4])
-        staff.Grade    = int(t[5])
-        staff.Step     = int(t[6])
-        staff.Hrweek   = int(t[7])
-        staff.Cost     = int(t[8])
-        staff.Division = t[9]                  # assign as strings
-        staff.Nation   = t[10]
-        tree.Fill()
-    tree.Print()
-    tree.Write()
+            # assign to pointers
+            temp[0], timediff[0], time[0] = line[3], line[4], line[5]
+            # # # # # # 
+            # FIXME adc to mV and energy conversion....
+            # # # # # #
+            adcs["%s_%s"%(name,layer)][0] = adc
+
+        f.close()    
+        tree.Print()
+        tree.Write()
     
     
-#### run fill function if invoked on CLI
+
 if __name__ == '__main__':
     files = getFileNames(path, args.ignore, args.filetype)
-    readFiles(files, path)
+    setup = getSetup(path)
+    readFiles(files, setup, path)
+    
