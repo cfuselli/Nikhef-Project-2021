@@ -8,8 +8,7 @@ def invTan(h):
 def events(h):
     it = invTan(h)
     return 0.5 * (it + np.sin(it) * np.cos(it) )
-   
-   
+
 label = "events $\sim \chi + sin(\chi)\cdot cos(\chi)$\n with $\chi = tan^{-1}(\\frac{10cm}{h})$" 
 
 h = np.linspace(5,150,145)
