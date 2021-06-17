@@ -109,6 +109,7 @@ while True:
     # halfly graceful exit... 
     except KeyboardInterrupt:
         t.enableOutput('OFF')
+        t.setLocal()
         break
 
 t.enableOutput('OFF')
