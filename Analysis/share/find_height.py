@@ -1,3 +1,7 @@
+# numerical analysis to get idea how far to distance the detector layers
+# @haslbeck
+# 17 June 2021
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -46,7 +50,7 @@ def normed_angle(h=heights):
 plt.plot(heights, normed_events(), label = 'normalised events')
 plt.plot(heights, normed_resolution(), label = 'normalised resolution')
 plt.plot(heights, normed_angle(), label = 'normalised angle $\\theta$')
-
+plt.xlim(0,160)
 plt.xlabel("distance between scintillator layers [cm]")
 plt.ylabel("[a.u.]")
 plt.legend()
