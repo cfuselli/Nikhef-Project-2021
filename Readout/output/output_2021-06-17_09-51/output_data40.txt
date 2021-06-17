@@ -1,0 +1,201 @@
+# layer adc volt temp timediff time detector_muon_count detector_count detector_name
+0 0 0 0 0 0 2001 2001 Franko
+1 0 0 0 0 0 653 653 CarloCosmicWatch
+2 0 0 0 0 0 623 623 Noor
+
+0 0 0 0 0 0 2002 2002 Franko
+1 0 0 0 0 0 654 654 CarloCosmicWatch
+2 0 0 0 0 0 624 624 Noor
+
+0 0 0 0 0 0 2003 2003 Franko
+1 0 0 0 0 0 688 688 Niels
+2 0 0 0 0 0 681 681 ZenBenMaster
+
+0 0 0 0 0 0 2004 2004 Franko
+1 0 0 0 0 0 662 662 Cecile
+2 0 0 0 0 0 699 699 rens
+
+0 0 0 0 0 0 2005 2005 Franko
+1 0 0 0 0 0 663 663 Cecile
+2 0 0 0 0 0 625 625 Noor
+
+0 0 0 0 0 0 2006 2006 Franko
+1 0 0 0 0 0 689 689 Niels
+2 0 0 0 0 0 682 682 ZenBenMaster
+
+0 0 0 0 0 0 2007 2007 Franko
+1 0 0 0 0 0 690 690 Niels
+2 0 0 0 0 0 626 626 Noor
+
+0 0 0 0 0 0 2008 2008 Franko
+1 0 0 0 0 0 664 664 Cecile
+2 0 0 0 0 0 627 627 Noor
+
+0 0 0 0 0 0 2009 2009 Franko
+1 0 0 0 0 0 691 691 Niels
+2 0 0 0 0 0 683 683 ZenBenMaster
+
+0 0 0 0 0 0 2010 2010 Franko
+1 0 0 0 0 0 665 665 Cecile
+2 0 0 0 0 0 628 628 Noor
+
+0 0 0 0 0 0 2011 2011 Franko
+1 0 0 0 0 0 666 666 Cecile
+2 0 0 0 0 0 629 629 Noor
+
+0 0 0 0 0 0 2012 2012 Franko
+1 0 0 0 0 0 667 667 Cecile
+2 0 0 0 0 0 700 700 rens
+
+0 0 0 0 0 0 2013 2013 Franko
+1 0 0 0 0 0 668 668 Cecile
+2 0 0 0 0 0 701 701 rens
+
+0 0 0 0 0 0 2014 2014 Franko
+1 0 0 0 0 0 669 669 Cecile
+2 0 0 0 0 0 684 684 ZenBenMaster
+
+0 0 0 0 0 0 2015 2015 Franko
+1 0 0 0 0 0 655 655 CarloCosmicWatch
+2 0 0 0 0 0 702 702 rens
+
+0 0 0 0 0 0 2016 2016 Franko
+1 0 0 0 0 0 670 670 Cecile
+2 0 0 0 0 0 685 685 ZenBenMaster
+
+0 0 0 0 0 0 2017 2017 Franko
+1 0 0 0 0 0 656 656 CarloCosmicWatch
+2 0 0 0 0 0 686 686 ZenBenMaster
+
+0 0 0 0 0 0 2018 2018 Franko
+1 0 0 0 0 0 671 671 Cecile
+2 0 0 0 0 0 630 630 Noor
+
+0 0 0 0 0 0 2019 2019 Franko
+1 0 0 0 0 0 672 672 Cecile
+2 0 0 0 0 0 631 631 Noor
+
+0 0 0 0 0 0 2020 2020 Franko
+1 0 0 0 0 0 657 657 CarloCosmicWatch
+2 0 0 0 0 0 687 687 ZenBenMaster
+
+0 0 0 0 0 0 2021 2021 Franko
+1 0 0 0 0 0 673 673 Cecile
+2 0 0 0 0 0 703 703 rens
+
+0 0 0 0 0 0 2022 2022 Franko
+1 0 0 0 0 0 692 692 Niels
+2 0 0 0 0 0 704 704 rens
+
+0 0 0 0 0 0 2023 2023 Franko
+1 0 0 0 0 0 674 674 Cecile
+2 0 0 0 0 0 705 705 rens
+
+0 0 0 0 0 0 2024 2024 Franko
+1 0 0 0 0 0 675 675 Cecile
+2 0 0 0 0 0 706 706 rens
+
+0 0 0 0 0 0 2025 2025 Franko
+1 0 0 0 0 0 658 658 CarloCosmicWatch
+2 0 0 0 0 0 707 707 rens
+
+0 0 0 0 0 0 2026 2026 Franko
+1 0 0 0 0 0 659 659 CarloCosmicWatch
+2 0 0 0 0 0 708 708 rens
+
+0 0 0 0 0 0 2027 2027 Franko
+1 0 0 0 0 0 660 660 CarloCosmicWatch
+2 0 0 0 0 0 632 632 Noor
+
+0 0 0 0 0 0 2028 2028 Franko
+1 0 0 0 0 0 661 661 CarloCosmicWatch
+2 0 0 0 0 0 709 709 rens
+
+0 0 0 0 0 0 2029 2029 Franko
+1 0 0 0 0 0 693 693 Niels
+2 0 0 0 0 0 633 633 Noor
+
+0 0 0 0 0 0 2030 2030 Franko
+1 0 0 0 0 0 676 676 Cecile
+2 0 0 0 0 0 634 634 Noor
+
+0 0 0 0 0 0 2031 2031 Franko
+1 0 0 0 0 0 677 677 Cecile
+2 0 0 0 0 0 710 710 rens
+
+0 0 0 0 0 0 2032 2032 Franko
+1 0 0 0 0 0 694 694 Niels
+2 0 0 0 0 0 711 711 rens
+
+0 0 0 0 0 0 2033 2033 Franko
+1 0 0 0 0 0 678 678 Cecile
+2 0 0 0 0 0 712 712 rens
+
+0 0 0 0 0 0 2034 2034 Franko
+1 0 0 0 0 0 662 662 CarloCosmicWatch
+2 0 0 0 0 0 713 713 rens
+
+0 0 0 0 0 0 2035 2035 Franko
+1 0 0 0 0 0 663 663 CarloCosmicWatch
+2 0 0 0 0 0 714 714 rens
+
+0 0 0 0 0 0 2036 2036 Franko
+1 0 0 0 0 0 664 664 CarloCosmicWatch
+2 0 0 0 0 0 688 688 ZenBenMaster
+
+0 0 0 0 0 0 2037 2037 Franko
+1 0 0 0 0 0 695 695 Niels
+2 0 0 0 0 0 635 635 Noor
+
+0 0 0 0 0 0 2038 2038 Franko
+1 0 0 0 0 0 679 679 Cecile
+2 0 0 0 0 0 715 715 rens
+
+0 0 0 0 0 0 2039 2039 Franko
+1 0 0 0 0 0 665 665 CarloCosmicWatch
+2 0 0 0 0 0 716 716 rens
+
+0 0 0 0 0 0 2040 2040 Franko
+1 0 0 0 0 0 666 666 CarloCosmicWatch
+2 0 0 0 0 0 636 636 Noor
+
+0 0 0 0 0 0 2041 2041 Franko
+1 0 0 0 0 0 667 667 CarloCosmicWatch
+2 0 0 0 0 0 717 717 rens
+
+0 0 0 0 0 0 2042 2042 Franko
+1 0 0 0 0 0 680 680 Cecile
+2 0 0 0 0 0 637 637 Noor
+
+0 0 0 0 0 0 2043 2043 Franko
+1 0 0 0 0 0 696 696 Niels
+2 0 0 0 0 0 689 689 ZenBenMaster
+
+0 0 0 0 0 0 2044 2044 Franko
+1 0 0 0 0 0 697 697 Niels
+2 0 0 0 0 0 690 690 ZenBenMaster
+
+0 0 0 0 0 0 2045 2045 Franko
+1 0 0 0 0 0 698 698 Niels
+2 0 0 0 0 0 638 638 Noor
+
+0 0 0 0 0 0 2046 2046 Franko
+1 0 0 0 0 0 681 681 Cecile
+2 0 0 0 0 0 639 639 Noor
+
+0 0 0 0 0 0 2047 2047 Franko
+1 0 0 0 0 0 682 682 Cecile
+2 0 0 0 0 0 640 640 Noor
+
+0 0 0 0 0 0 2048 2048 Franko
+1 0 0 0 0 0 683 683 Cecile
+2 0 0 0 0 0 718 718 rens
+
+0 0 0 0 0 0 2049 2049 Franko
+1 0 0 0 0 0 668 668 CarloCosmicWatch
+2 0 0 0 0 0 719 719 rens
+
+0 0 0 0 0 0 2050 2050 Franko
+1 0 0 0 0 0 669 669 CarloCosmicWatch
+2 0 0 0 0 0 691 691 ZenBenMaster
+
