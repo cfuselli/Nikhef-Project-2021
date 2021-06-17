@@ -1,6 +1,0 @@
-Mon Jun 14 17:27:38 2021
-1 MASTER [1.0, 0.0, 1.0] /dev/tty.usbserial-142110 Franko
-2 SLAVE [1.0, 1.0, 2.0] /dev/tty.usbserial-14230 Niels
-2 SLAVE [1.0, 0.0, 2.0] /dev/tty.usbserial-14220 Cecile
-3 SLAVE [1.0, 0.0, 3.0] /dev/tty.usbserial-142130 rens
-3 SLAVE [1.0, 2.0, 3.0] /dev/tty.usbserial-142120 ZenBenMaster

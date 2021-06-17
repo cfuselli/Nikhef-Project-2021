@@ -19,17 +19,32 @@ import matplotlib.animation as animation
 from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 from Readout.cosmic_watch.class_module import serial_ports
 
-folder_name = 'output_2021-06-16_16-31'
-file = open(folder_name + '/grid_setup.txt', 'r')
+numbers = re.compile(r'(\d+)')
 
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
+
+
+# Pick the last folder of data in the output folder
+folder_name = sorted(glob.glob('output/output_*'), key=numericalSort)[-1]
+print('Reading folder: ', folder_name)
+
+# Open grid_setup file and start building the grid
+file = open(folder_name + '/grid_setup.txt', 'r')
 grid = Grid()
 
+# read and build the grid and the detectors
 for i, line in enumerate(file.readlines()):
     if i == 0:
         print('Data from: ', line)
     else:
-        if len(line) < 3: # there should be one blank line
+        if len(line) < 3:
+            # when we find a blank line, we stop reading the grid
             break
+
+        # create a detector !
         d = Detector()
         line = line.replace('[', '')
         line = line.replace('\n', '')
@@ -45,53 +60,25 @@ for i, line in enumerate(file.readlines()):
         grid.detectors.append(d)
 
 print(grid.info())
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ln, = plt.plot([], [], [])
-
-#def init():
-grid.plot(ax, show=False)
-
 file.close()
 
-oldname = 'ciao'
+# create fig and plot the grid
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+grid.plot(ax, show=False)
 
-
-muon = Muon()
-
+# initialize some variables
+oldname = None
 file_number = 0
+muon = Muon()
+alpha_factor = 1.1
 
-numbers = re.compile(r'(\d+)')
-
-def numericalSort(value):
-    parts = numbers.split(value)
-    parts[1::2] = map(int, parts[1::2])
-    return parts
-
-def get_file():
-
-    filename = sorted(glob.glob(folder_name + '/output_data*'), key=numericalSort)[-1]
-    f = open(filename, "r")
-    header = f.readline()
-    print(filename)
-
-    '''
-    file_number = 0
-    print(i)
-    header = file.readline()
-    print(header)
-    if os.path.exists(folder_name + '/output_data%i.txt' % (file_number + 1)):
-        file.close()
-        file_number += 1
-        file = open(folder_name + '/output_data%i.txt' % file_number, "r")
-        header = file.readline()
-        print('Reading file ' + folder_name + '/output_data%i.txt' % file_number)
-        print(header)
-    '''
-    return f
 
 def update():
+    '''
+    This function is called continuously based on the interval of the timer
+    '''
+
     global folder_name
     global filename
     global oldname
@@ -99,30 +86,49 @@ def update():
     global where
     global new_where
 
+    # change the alpha of every plotted line (line == muon)
+    # changing the alpha factor makes lines disappear quicker or slower
+    for mline in fig.gca().lines:
+        try:
+            mline.set_alpha(plt.getp(mline, 'alpha')/alpha_factor)
+            if plt.getp(mline, 'alpha') < 0.01:
+                mline.remove()
+        except:
+            pass
+
+    # find the last file in the folder that we are reading
     filename = sorted(glob.glob(folder_name + '/output_data*'), key=numericalSort)[-1]
     if filename != oldname:
+        # if there is a new file
         print('Changing file ', oldname, filename)
+        file.close()
         file = open(filename, "r")
         file.seek(0, 0)
         header = file.readline()
-        if oldname == 'ciao':
+        if oldname is None:
+            # if this is the first file that we are reading
+            # let's go to the end of it
             while True:
                 line = file.readline()
                 if not line:
                     break
         oldname = filename
 
+    # try to read a line. if empty, come back with the cursor
     where = file.tell()
     line = file.readline()
     if not line:
         file.seek(where)
     new_where = file.tell()
 
+    # if there was a new line, it's a muon !
+    # let's read the lines until the next blank line
     if where != new_where:
         while line != '\n':
             line = line.replace('\n', '')
             lsplit = line.split(' ')
             det = 0
+            # find the right detector to assign
             for d in grid.detectors:
                 if d.name == lsplit[-1]:
                     det = d
@@ -131,6 +137,7 @@ def update():
                 strin = 'Unknown detector found ' + lsplit[-1]
                 exit(strin)
 
+            # add the data to each signal
             signal = Signal(det)
             try:
                 signal.adc = int(lsplit[1])
@@ -146,38 +153,13 @@ def update():
 
         print(' ----> Muon', filename, datetime.today().time())
         muon.plot(ax)
-        # muon.print()
+        muon.print()
         muon.reset()
         fig.canvas.draw_idle()
 
 
-
-# ani = animation.FuncAnimation(fig, update, interval=1000)
 timer = fig.canvas.new_timer(interval=200)
 timer.add_callback(update)
 timer.start()
 
 plt.show()
-
-
-'''
-
-            def __init__(self, data, detector, time, timediff):
-                data = data.split(' ')
-                #   0               1                   2
-                # count + " [" + countslave + "] " + time_stamp + " " +
-                #  3            4                       5
-                # adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " +
-                #   6                       7                   8                   9
-                # temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
-                self.detector = detector
-                self.time = time
-                self.timediff = timediff
-                self.adc = data[3]
-                self.volt = data[4]
-                self.temp = data[6]
-                self.muon = False
-                self.count = int(data[0])
-                detector.count += 1
-
-'''
