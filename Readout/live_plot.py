@@ -19,7 +19,7 @@ import matplotlib.animation as animation
 from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 from Readout.cosmic_watch.class_module import serial_ports
 
-folder_name = 'output_2021-06-16_15-30'
+folder_name = 'output_2021-06-16_16-31'
 file = open(folder_name + '/grid_setup.txt', 'r')
 
 grid = Grid()
@@ -50,18 +50,35 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ln, = plt.plot([], [], [])
 
-def init():
-    grid.plot(ax, show=False)
+#def init():
+grid.plot(ax, show=False)
 
 file.close()
 
+oldname = 'ciao'
 
 
 muon = Muon()
 
-def update(i):
+file_number = 0
+
+numbers = re.compile(r'(\d+)')
+
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
+
+def get_file():
+
+    filename = sorted(glob.glob(folder_name + '/output_data*'), key=numericalSort)[-1]
+    f = open(filename, "r")
+    header = f.readline()
+    print(filename)
+
+    '''
     file_number = 0
-    file = open(folder_name + '/output_data%i.txt' % file_number, "r")
+    print(i)
     header = file.readline()
     print(header)
     if os.path.exists(folder_name + '/output_data%i.txt' % (file_number + 1)):
@@ -71,13 +88,37 @@ def update(i):
         header = file.readline()
         print('Reading file ' + folder_name + '/output_data%i.txt' % file_number)
         print(header)
+    '''
+    return f
+
+def update():
+    global folder_name
+    global filename
+    global oldname
+    global file
+    global where
+    global new_where
+
+    filename = sorted(glob.glob(folder_name + '/output_data*'), key=numericalSort)[-1]
+    if filename != oldname:
+        print('Changing file ', oldname, filename)
+        file = open(filename, "r")
+        file.seek(0, 0)
+        header = file.readline()
+        if oldname == 'ciao':
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+        oldname = filename
 
     where = file.tell()
     line = file.readline()
     if not line:
-        time.sleep(1)
         file.seek(where)
-    else:
+    new_where = file.tell()
+
+    if where != new_where:
         while line != '\n':
             line = line.replace('\n', '')
             lsplit = line.split(' ')
@@ -99,27 +140,23 @@ def update(i):
                 signal.time = datetime_object
                 signal.timediff = float(lsplit[4])
             except:
-                print('')
+                pass
             muon.add_signal(signal)
             line = file.readline()
 
-        print(' ----> Muon')
-        muon.print()
+        print(' ----> Muon', filename, datetime.today().time())
         muon.plot(ax)
-        if muon.signals[1].detector.dimensions[0] > muon.signals[1].detector.dimensions[1]:
-            fx = muon.signals[1].detector.pos[0]
-            fy = muon.signals[2].detector.pos[1]
-        else:
-            fx = muon.signals[2].detector.pos[0]
-            fy = muon.signals[1].detector.pos[1]
-        print(muon.signals[1].detector.pos, muon.signals[2].detector.pos)
-        print(muon.signals[1].detector.dimensions, muon.signals[2].detector.dimensions)
-        print(fx, fy)
-
+        # muon.print()
         muon.reset()
+        fig.canvas.draw_idle()
 
 
-ani = animation.FuncAnimation(fig, update, interval=1000)
+
+# ani = animation.FuncAnimation(fig, update, interval=1000)
+timer = fig.canvas.new_timer(interval=200)
+timer.add_callback(update)
+timer.start()
+
 plt.show()
 
 
