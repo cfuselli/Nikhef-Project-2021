@@ -1,0 +1,201 @@
+# layer adc volt temp timediff time detector_muon_count detector_count detector_name
+0 0 0 0 0 0 1751 1751 Franko
+1 0 0 0 0 0 586 586 Cecile
+2 0 0 0 0 0 612 612 rens
+
+0 0 0 0 0 0 1752 1752 Franko
+1 0 0 0 0 0 587 587 Cecile
+2 0 0 0 0 0 613 613 rens
+
+0 0 0 0 0 0 1753 1753 Franko
+1 0 0 0 0 0 571 571 CarloCosmicWatch
+2 0 0 0 0 0 614 614 rens
+
+0 0 0 0 0 0 1754 1754 Franko
+1 0 0 0 0 0 572 572 CarloCosmicWatch
+2 0 0 0 0 0 615 615 rens
+
+0 0 0 0 0 0 1755 1755 Franko
+1 0 0 0 0 0 573 573 CarloCosmicWatch
+2 0 0 0 0 0 597 597 ZenBenMaster
+
+0 0 0 0 0 0 1756 1756 Franko
+1 0 0 0 0 0 588 588 Cecile
+2 0 0 0 0 0 616 616 rens
+
+0 0 0 0 0 0 1757 1757 Franko
+1 0 0 0 0 0 596 596 Niels
+2 0 0 0 0 0 598 598 ZenBenMaster
+
+0 0 0 0 0 0 1758 1758 Franko
+1 0 0 0 0 0 597 597 Niels
+2 0 0 0 0 0 617 617 rens
+
+0 0 0 0 0 0 1759 1759 Franko
+1 0 0 0 0 0 598 598 Niels
+2 0 0 0 0 0 599 599 ZenBenMaster
+
+0 0 0 0 0 0 1760 1760 Franko
+1 0 0 0 0 0 599 599 Niels
+2 0 0 0 0 0 544 544 Noor
+
+0 0 0 0 0 0 1761 1761 Franko
+1 0 0 0 0 0 600 600 Niels
+2 0 0 0 0 0 618 618 rens
+
+0 0 0 0 0 0 1762 1762 Franko
+1 0 0 0 0 0 589 589 Cecile
+2 0 0 0 0 0 545 545 Noor
+
+0 0 0 0 0 0 1763 1763 Franko
+1 0 0 0 0 0 601 601 Niels
+2 0 0 0 0 0 619 619 rens
+
+0 0 0 0 0 0 1764 1764 Franko
+1 0 0 0 0 0 590 590 Cecile
+2 0 0 0 0 0 620 620 rens
+
+0 0 0 0 0 0 1765 1765 Franko
+1 0 0 0 0 0 602 602 Niels
+2 0 0 0 0 0 621 621 rens
+
+0 0 0 0 0 0 1766 1766 Franko
+1 0 0 0 0 0 574 574 CarloCosmicWatch
+2 0 0 0 0 0 600 600 ZenBenMaster
+
+0 0 0 0 0 0 1767 1767 Franko
+1 0 0 0 0 0 591 591 Cecile
+2 0 0 0 0 0 601 601 ZenBenMaster
+
+0 0 0 0 0 0 1768 1768 Franko
+1 0 0 0 0 0 575 575 CarloCosmicWatch
+2 0 0 0 0 0 622 622 rens
+
+0 0 0 0 0 0 1769 1769 Franko
+1 0 0 0 0 0 603 603 Niels
+2 0 0 0 0 0 602 602 ZenBenMaster
+
+0 0 0 0 0 0 1770 1770 Franko
+1 0 0 0 0 0 576 576 CarloCosmicWatch
+2 0 0 0 0 0 546 546 Noor
+
+0 0 0 0 0 0 1771 1771 Franko
+1 0 0 0 0 0 577 577 CarloCosmicWatch
+2 0 0 0 0 0 603 603 ZenBenMaster
+
+0 0 0 0 0 0 1772 1772 Franko
+1 0 0 0 0 0 604 604 Niels
+2 0 0 0 0 0 547 547 Noor
+
+0 0 0 0 0 0 1773 1773 Franko
+1 0 0 0 0 0 592 592 Cecile
+2 0 0 0 0 0 548 548 Noor
+
+0 0 0 0 0 0 1774 1774 Franko
+1 0 0 0 0 0 578 578 CarloCosmicWatch
+2 0 0 0 0 0 549 549 Noor
+
+0 0 0 0 0 0 1775 1775 Franko
+1 0 0 0 0 0 605 605 Niels
+2 0 0 0 0 0 623 623 rens
+
+0 0 0 0 0 0 1776 1776 Franko
+1 0 0 0 0 0 593 593 Cecile
+2 0 0 0 0 0 624 624 rens
+
+0 0 0 0 0 0 1777 1777 Franko
+1 0 0 0 0 0 594 594 Cecile
+2 0 0 0 0 0 604 604 ZenBenMaster
+
+0 0 0 0 0 0 1778 1778 Franko
+1 0 0 0 0 0 606 606 Niels
+2 0 0 0 0 0 605 605 ZenBenMaster
+
+0 0 0 0 0 0 1779 1779 Franko
+1 0 0 0 0 0 595 595 Cecile
+2 0 0 0 0 0 606 606 ZenBenMaster
+
+0 0 0 0 0 0 1780 1780 Franko
+1 0 0 0 0 0 579 579 CarloCosmicWatch
+2 0 0 0 0 0 550 550 Noor
+
+0 0 0 0 0 0 1781 1781 Franko
+1 0 0 0 0 0 607 607 Niels
+2 0 0 0 0 0 607 607 ZenBenMaster
+
+0 0 0 0 0 0 1782 1782 Franko
+1 0 0 0 0 0 580 580 CarloCosmicWatch
+2 0 0 0 0 0 608 608 ZenBenMaster
+
+0 0 0 0 0 0 1783 1783 Franko
+1 0 0 0 0 0 581 581 CarloCosmicWatch
+2 0 0 0 0 0 625 625 rens
+
+0 0 0 0 0 0 1784 1784 Franko
+1 0 0 0 0 0 596 596 Cecile
+2 0 0 0 0 0 626 626 rens
+
+0 0 0 0 0 0 1785 1785 Franko
+1 0 0 0 0 0 582 582 CarloCosmicWatch
+2 0 0 0 0 0 609 609 ZenBenMaster
+
+0 0 0 0 0 0 1786 1786 Franko
+1 0 0 0 0 0 608 608 Niels
+2 0 0 0 0 0 627 627 rens
+
+0 0 0 0 0 0 1787 1787 Franko
+1 0 0 0 0 0 583 583 CarloCosmicWatch
+2 0 0 0 0 0 628 628 rens
+
+0 0 0 0 0 0 1788 1788 Franko
+1 0 0 0 0 0 584 584 CarloCosmicWatch
+2 0 0 0 0 0 629 629 rens
+
+0 0 0 0 0 0 1789 1789 Franko
+1 0 0 0 0 0 609 609 Niels
+2 0 0 0 0 0 630 630 rens
+
+0 0 0 0 0 0 1790 1790 Franko
+1 0 0 0 0 0 597 597 Cecile
+2 0 0 0 0 0 631 631 rens
+
+0 0 0 0 0 0 1791 1791 Franko
+1 0 0 0 0 0 585 585 CarloCosmicWatch
+2 0 0 0 0 0 551 551 Noor
+
+0 0 0 0 0 0 1792 1792 Franko
+1 0 0 0 0 0 598 598 Cecile
+2 0 0 0 0 0 632 632 rens
+
+0 0 0 0 0 0 1793 1793 Franko
+1 0 0 0 0 0 610 610 Niels
+2 0 0 0 0 0 633 633 rens
+
+0 0 0 0 0 0 1794 1794 Franko
+1 0 0 0 0 0 586 586 CarloCosmicWatch
+2 0 0 0 0 0 552 552 Noor
+
+0 0 0 0 0 0 1795 1795 Franko
+1 0 0 0 0 0 611 611 Niels
+2 0 0 0 0 0 634 634 rens
+
+0 0 0 0 0 0 1796 1796 Franko
+1 0 0 0 0 0 612 612 Niels
+2 0 0 0 0 0 553 553 Noor
+
+0 0 0 0 0 0 1797 1797 Franko
+1 0 0 0 0 0 613 613 Niels
+2 0 0 0 0 0 635 635 rens
+
+0 0 0 0 0 0 1798 1798 Franko
+1 0 0 0 0 0 599 599 Cecile
+2 0 0 0 0 0 636 636 rens
+
+0 0 0 0 0 0 1799 1799 Franko
+1 0 0 0 0 0 587 587 CarloCosmicWatch
+2 0 0 0 0 0 610 610 ZenBenMaster
+
+0 0 0 0 0 0 1800 1800 Franko
+1 0 0 0 0 0 614 614 Niels
+2 0 0 0 0 0 554 554 Noor
+
