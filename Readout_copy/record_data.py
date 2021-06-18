@@ -6,6 +6,8 @@ import time
 import configparser
 import serial.tools.list_ports
 import schedule
+import io
+
 
 # I don't know why this works on the computer of the lab but not on my MacBook (Carlo)
 # from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
@@ -21,7 +23,7 @@ stack = Stack(2)
 # read config from setup.ini (READ README.md)
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
-config.read('setup.ini')
+config.read('setup.ini', encoding='utf-8')
 config_detectors = list(config.items(section='DETECTORS'))
 
 
@@ -102,9 +104,9 @@ except:
 os.makedirs(folder_name)
 
 
-grid_file = open(folder_name + '/grid_setup.txt', "w")
-file = open(folder_name + '/output_data%i.txt' % file_number, "w")
-control_file = open(folder_name + '/output_master_control%i.txt' % file_number, "w")
+grid_file = io.open(folder_name + '/grid_setup.txt', mode="w", encoding="utf-8")
+file = io.open(folder_name + '/output_data%i.txt' % file_number, mode="w", encoding="utf-8")
+control_file = io.open(folder_name + '/output_master_control%i.txt' % file_number, mode="w", encoding="utf-8")
 
 grid_file.write(datetime.today().ctime() + '\n')
 grid_file.write(grid.info())
@@ -161,7 +163,7 @@ while True:
 
             if signal_control_count % signals_per_control_file == 0:
                 control_file_number += 1
-                control_file = open(folder_name + '/output_master_control%i.txt' % control_file_number, "w")
+                control_file = io.open(folder_name + '/output_master_control%i.txt' % control_file_number, mode="w", encoding="utf-8")
                 control_file.write(header)
 
             # if last signal is close in time, then maybe it's a muon
@@ -187,7 +189,7 @@ while True:
                     if muon_count % signals_per_file == 0:
                         file_number += 1
                         file.close()
-                        file = open(folder_name + '/output_data%i.txt' % file_number, "w")
+                        file = io.open(folder_name + '/output_data%i.txt' % file_number, mode="w", encoding="utf-8")
                         file.write(header)
                         file.flush()
 
