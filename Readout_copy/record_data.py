@@ -23,7 +23,7 @@ stack = Stack(2)
 # read config from setup.ini (READ README.md)
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
-config.read('setup.ini')
+config.read('setup.ini', encoding='utf-8')
 config_detectors = list(config.items(section='DETECTORS'))
 
 
