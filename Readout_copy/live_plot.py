@@ -21,7 +21,7 @@ from class_module import serial_ports
 
 numbers = re.compile(r'(\d+)')
 
-def numericalSort(value):
+def numericalSort(value): # this can be done without regex...
     parts = numbers.split(value)
     parts[1::2] = map(int, parts[1::2])
     return parts
@@ -46,10 +46,17 @@ for i, line in enumerate(file.readlines()):
 
         # create a detector !
         d = Detector()
-        line = line.replace('[', '')
-        line = line.replace('\n', '')
-        line = line.replace(',', '')
-        line = line.replace(']', '').split(' ')
+        line = line.replace('[', ' ')
+        line = line.replace(']', ' ')
+        line = line.replace('\n', ' ')
+        line = line.replace(',', ' ')
+        line = line.replace("'", ' ')
+        #line = line.replace(']', '').split(' ')
+        line = line.split(' ')
+        line = [val for val in line if val != '']
+        print(line)
+        
+        print(line)
         pos = [float(line[2]), float(line[3]), float(line[4])]
         dim = [float(line[5]), float(line[6]), float(line[7])]
         d.pos = pos
