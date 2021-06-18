@@ -14,6 +14,7 @@ import argparse
 from array import array
 from natsort import natsorted # for file name sorting
 from sys import exit
+import io
 
 # parse path
 parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
@@ -48,7 +49,7 @@ def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
 def getSetup(path, filetye=args.filetype, name = 'grid_setup'):
     """ extract the used detectors from grid_setup.txt file """
     setup = []
-    f = open("%s%s.txt"%(path,name))
+    f = io.open("%s%s.txt"%(path,name), encoding = 'utf-8')
     for line in f.readlines():
         line = line.split(' ')
         if len(line) <= 1 : break
