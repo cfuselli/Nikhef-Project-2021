@@ -1,3 +1,3 @@
 echo "changing PYTHONPATH to"
-echo $PWD/python:$PYTHONPATH
-export PYTHONPATH=$PWD/python:$PYTHONPATH
+echo $PWD/cosmic_watch:$PYTHONPATH
+export PYTHONPATH=$PWD/cosmic_watch:$PYTHONPATH
