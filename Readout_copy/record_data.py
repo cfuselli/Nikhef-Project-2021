@@ -116,6 +116,8 @@ header = '# layer adc volt temp timediff time detector_muon_count detector_coun
 
 file.write(header)
 control_file.write(header)
+file.flush()
+control_file.flush()
 
 muon_count = 0
 signal_control_count = 0

@@ -237,8 +237,8 @@ class Muon:
 
     def write(self, f):
         for s in self.signals:
-            f.write(s.info() + '\n')
-        f.write('\n')
+            s.write(f)
+        s.write('\n')
         f.flush()
 
     def print(self):
