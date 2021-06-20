@@ -71,7 +71,7 @@ source_position = '''+str(x[i,j])+"cm " +str(y[i,j])+"cm "+str(z[i,j])+'''cm
 source_type = "beam"
 particle_type = "mu-"
 source_energy = 4GeV
-source_direction = '''+str(directionx[i,j])+' '+str(directiony[i,j])+' '+str(directionz[i,j])+'''
+beam_direction = '''+str(directionx[i,j])+' '+str(directiony[i,j])+' '+str(directionz[i,j])+'''
 physics_list = QGSP_BIC
 
 output_plots=true
