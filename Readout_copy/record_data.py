@@ -13,9 +13,10 @@ import io
 # from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 # from cosmic_watch.class_module import serial_ports
 
-from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
-from Readout.cosmic_watch.class_module import serial_ports
+#from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
+#from Readout.cosmic_watch.class_module import serial_ports
 
+from class_module import * #Grid, Detector, Signal, Stack, Muon
 print(" ")
 
 stack = Stack(2)
@@ -84,7 +85,7 @@ grid.detectors.sort(key=sortkey)
 print(grid.info())
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-grid.plot(ax, show=False)
+#grid.plot(ax, show=False)
 
 
 signals_per_file = int(config['INFO']['signals_per_file'])
