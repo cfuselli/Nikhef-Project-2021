@@ -67,7 +67,7 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             =  1; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -110,9 +110,9 @@ void setup() {
 
   get_detector_name(detector_name);  
   if (MASTER == 1){
-      Serial.println((String)detector_name + ", MASTER");}
+      Serial.println((String)"OLED_M_S," + detector_name + ",MASTER");}
   else{
-      Serial.println((String)detector_name + ", SLAVE");}
+      Serial.println((String)"OLED_M_S," + detector_name + ",SLAVE");}
 
   //Serial.println((String)count + " [" + countslave + "] " + time_stamp+ " " + adc+ " " + sipm_voltage + " " + measurement_deadtime+ " " + temperatureC + " " + MASTER_SLAVE + " " + keep_pulse + " " + detector_name);
 
@@ -131,9 +131,11 @@ void loop()
   while (1){
 
     // This is to check if the jack is working
+    /*
     if (digitalRead(6) == HIGH){
       countpin6++;
     }
+    */
     
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
@@ -258,7 +260,7 @@ void get_time()
 
 //  display.println((String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
 
-  display.println("Count: " + (String)count + " [" + (String)countslave + "] " + "{" + countpin6 + "}");
+  display.println("Count: " + (String)count + " [" + (String)countslave + "]");
   display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
   // If you want to see the base signal and the screen is not working

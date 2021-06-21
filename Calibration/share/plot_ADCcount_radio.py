@@ -30,6 +30,7 @@ def get_data(fname):
     print('get', fname)
 
 
+<<<<<<< HEAD
     adc = [] 
     if "NewFile" in fname: adc2 = []
     with open(fname ) as csv_file: 
@@ -41,6 +42,17 @@ def get_data(fname):
                 adc.append(float(row[2]))
             else:
                 adc.append(float(row[4]))
+=======
+    adc = []
+    fpath = "../data/"
+    file_loc = (fpath+fname)
+    print (file_loc)
+    with open(file_loc) as csv_file: 
+        csv_reader = csv.reader(csv_file, delimiter= ',')
+        for i,row in enumerate(csv_reader):
+            if i<6: continue  # skip header
+            adc.append(float(row[2]))
+>>>>>>> 3ae360c433797e2d6d51263ec0f9aff09efe8baa
             pass
 
         index_max = adc.index(max(adc))     #cut all data before peak (~t=0)
@@ -51,3 +63,7 @@ def get_data(fname):
     plt.hist(adc)
     plt.savefig("adc_radioactive_histogram.png")
     return peak, adc_hist
+<<<<<<< HEAD
+=======
+get_data(fname)
+>>>>>>> 3ae360c433797e2d6d51263ec0f9aff09efe8baa

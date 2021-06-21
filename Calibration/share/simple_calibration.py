@@ -51,6 +51,7 @@ t.setFrequency(1e6) # 1MHz
 t.setBurstPhase(340) # degree
 t.setBurstPeriod(args.period) # seconds
 t.setBurstCount(1)
+t.setOutputLoad(1000)
 t.setArbWaveform('ARB1')
 
 # read header
@@ -108,6 +109,7 @@ while True:
     # halfly graceful exit... 
     except KeyboardInterrupt:
         t.enableOutput('OFF')
+        t.setLocal()
         break
 
 t.enableOutput('OFF')
