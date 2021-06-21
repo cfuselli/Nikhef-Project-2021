@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 #Define your parameters:
 
 #Length of orthogonal scintillators
-h_0=40
+h_0=10
 #This is the maximum detectable angle in degrees,leads to the height between scint. layers by h=L/tan(θ_max)
-theta_max=14
+theta_max=45
 
 
 def pdf_theta(x,theta_max=theta_max*np.pi/180):
@@ -50,13 +50,13 @@ def simulation(N,N_theta,N_phi,theta_max=theta_max):
     for i in range (N_theta):
         for j in range(N_phi):
             N_events=n_phi[i]
-            name.append("A_th_ph_"+str(int(theta_max*(i/(N_theta-1))))+"_"+str(int(j*360/N_phi))+".conf")
+            name.append("A10_th_ph_"+str(int(theta_max*(i/(N_theta-1))))+"_"+str(int(j*360/N_phi))+".conf")
             f = open(name[w], "w")
             f.write(
 '''[Allpix]
-root_file = "A_th_ph_'''+str(int(theta_max*(i/(N_theta-1))))+"_"+str(int(j*360/N_phi))+'''"
+root_file = "A10_th_ph_'''+str(int(theta_max*(i/(N_theta-1))))+"_"+str(int(j*360/N_phi))+'''"
 number_of_events = '''+str(N_events)+ '''
-detectors_file = "scintillator_layer_new_detector.conf"
+detectors_file = "scintillator_layer_new_detector10.conf"
 log_level= "Info"
 
 [GeometryBuilderGeant4]
