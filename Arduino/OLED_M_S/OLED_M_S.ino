@@ -67,7 +67,7 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -169,11 +169,14 @@ void loop()
               keep_pulse = 1;
               count++;}}  
 
+      
       // Wait for ~8us
       analogRead(A3);
 
+
       // If Master, stop signalling the Slave
       if (MASTER == 1) {
+          delayMicroseconds(80);      // pauses for  microseconds
           digitalWrite(6, LOW);}
 
       // Measure the temperature, voltage reference is currently set to 3.3V
@@ -194,6 +197,8 @@ void loop()
 
       measurement_t1 = micros();
       
+      // analogWrite(3, LED_BRIGHTNESS);
+
       if (MASTER == 1) {
           analogWrite(3, LED_BRIGHTNESS);
           sipm_voltage = get_sipm_voltage(adc);
