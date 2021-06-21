@@ -124,21 +124,23 @@ for f in files:
                 timediff_else.extend(timediff)
 
 
-    make_hist(1,adc,'ADC',label=f,bins=128)
-    make_hist(2,timediff,'Time diff [s]',label=f,x_range=(0,60),bins=60)
+    make_hist(1,adc,'ADC',label=f,bins=128,x_range=(0,1023), FIT = args.fit, NORM = args.norm)
+    make_hist(2,timediff,'Time diff [s]',label=f,x_range=(0,5),bins=60, FIT = args.fit, NORM = args.norm)
+
+    #make_hist(5,adc,'ADC',label=f,bins=16,x_range=(0,256), FIT = args.fit, NORM = args.norm)
 
 dist2_label = DISTINCTION_2 if DISTINCTION_2 is not None else "NOT %s"%DISTINCTION
 
-make_hist(3,adc_cable,'ADC',label='total %s'%dist2_label,bins=128, FIT = args.fit, NORM = args.norm)
-make_hist(3,adc_scint,'ADC',label='total %s'%DISTINCTION,bins=128, FIT = args.fit, NORM = args.norm)
+make_hist(3,adc_cable,'ADC',label='total %s'%dist2_label,bins=64, FIT = args.fit, NORM = args.norm)
+make_hist(3,adc_scint,'ADC',label='total %s'%DISTINCTION,bins=64, FIT = args.fit, NORM = args.norm)
 
-make_hist(4,timediff_cable,'Time diff [s]',label='total %s'%dist2_label,x_range=(0,60),bins=60, FIT = args.fit, NORM = args.norm)
-make_hist(4,timediff_scint,'Time diff [s]',label='total %s'%DISTINCTION,x_range=(0,60),bins=60, FIT = args.fit, NORM = args.norm)
+make_hist(4,timediff_cable,'Time diff [s]',label='total %s'%dist2_label,x_range=(0,5),bins=60, FIT = args.fit, NORM = args.norm)
+make_hist(4,timediff_scint,'Time diff [s]',label='total %s'%DISTINCTION,x_range=(0,5),bins=60, FIT = args.fit, NORM = args.norm)
 
 
 if DISTINCTION_2 is not None:
     make_hist(3,adc_else,'ADC',label='total rest',bins=128, FIT = args.fit, NORM = args.norm)
-    make_hist(4,timediff_else,'Time diff [s]',label='total rest',x_range=(0,60),bins=60, FIT = args.fit, NORM = args.norm)
+    make_hist(4,timediff_else,'Time diff [s]',label='total rest',x_range=(0,5),bins=60, FIT = args.fit, NORM = args.norm)
 
 # close the plot when pressing a key
 plt.draw()
