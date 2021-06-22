@@ -93,7 +93,7 @@ def make_hist(id,data,xname,bins=256,x_range=(0,1023),label=None,alpha=1, FIT = 
     if FIT:
         bin_centers = np.array([(bin_x[i]+bin_x[i+1]) for i in range(len(bin_x)-1)]) * 0.5
         
-        if "Time" in xname: xmin, xmax , p0 = 0.5, 8, [0.1,0.05]
+        if "Time" in xname: xmin, xmax , p0 = 0.5, 25, [0.1,0.05]
         elif "ADC" in xname: xmin, xmax, p0 = 50, 700, [0.01,0.001]
         else: xmin, xmax = -np.inf, np.inf
         vals, errs = exp_pdf_fit(bin_centers, data, xmin, xmax)
@@ -173,7 +173,7 @@ make_hist(3,adc_cable,'ADC',label=label_cable,x_range=adc_range,bins=adc_bins,co
 make_hist(3,adc_scint,'ADC',label=label_scint,x_range=adc_range,bins=adc_bins,color_id = 1)
 
 # timediff
-time_range , time_bins = (0,10), 10
+time_range , time_bins = (0,30), 30
 make_hist(4,timediff_cable,'Time difference between two counts ($\geq$ 0.5s) [s]',label=label_cable,x_range=time_range,bins=time_bins,color_id = 0)
 make_hist(4,timediff_scint,'Time difference between two counts ($\geq$ 0.5s) [s]',label=label_scint,x_range=time_range,bins=time_bins,color_id = 1)
 
