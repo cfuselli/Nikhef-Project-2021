@@ -137,7 +137,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
                     if (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before): # .. in 3 different layers
                     # check the time difference
                         _tot_time = timediff_now + timediff_before
-                        if timediff_now <= args.cw and timediff_before <= arg.cw and _tot_time <= args.tw:
+                        if timediff_now <= args.cw and timediff_before <= args.cw and _tot_time <= args.tw:
                             # if we are here we have three ... save the event
                             event += 1
                         
