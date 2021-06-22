@@ -14,6 +14,7 @@ import argparse
 from array import array
 from natsort import natsorted # for file name sorting
 from sys import exit
+import io
 
 # parse path
 parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
@@ -48,7 +49,7 @@ def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
 def getSetup(path, filetye=args.filetype, name = 'grid_setup'):
     """ extract the used detectors from grid_setup.txt file """
     setup = []
-    f = open("%s%s.txt"%(path,name))
+    f = io.open("%s%s.txt"%(path,name), encoding = 'utf-8')
     for line in f.readlines():
         line = line.split(' ')
         if len(line) <= 1 : break
@@ -96,32 +97,34 @@ def readFiles(files, setup, path=args.path, verbose = True):
 
         # open file
         print('Processing %s (%i/%i)'%(f,nf+1,len(files)))
-        f_in = open('%s%s'%(path,f))
+        f_in = io.open('%s%s'%(path,f), encoding='utf-8')
         f_in.readline()  # skip header
 
         # read data
         i = 1
-        for line in f_readlines():
+        for line in f_in.readlines():
             line  = line.split(' ')
-            print(line)
+            #print(line)
 
             # fill tree for each event
             if len(line) == 1:
                 number[0] = i
                 tree.Fill()
                 for detector in adcs: adcs[detector][0] = 0.
-                i += 1    
+                i += 1
+                continue
             
-            layer, name = line[0], line[-1]
+            layer, name = line[0], line[-2]
             
             # assign to pointers
-            temp[0], timediff[0], time[0] = line[3], line[4], line[5]
+            #temp[0], timediff[0], time[0] = float(line[3]), float(line[4]), float(line[5])
+            temp[0], timediff[0] = float(line[3]), float(line[4])
             # # # # # # 
             # FIXME adc to mV and energy conversion....
             # # # # # #
-            adcs["%s_%s"%(name,layer)][0] = adc
+            adcs["%s_%s"%(name,layer)][0] = int(line[1])
 
-        f.close()    
+        f_in.close()    
         tree.Print()
         tree.Write()
     
