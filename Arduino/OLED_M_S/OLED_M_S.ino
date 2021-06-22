@@ -24,8 +24,8 @@
 const byte OLED = 1;                      // Turn on/off the OLED [1,0]
 
 // Originally it was 50 and 15
-const int SIGNAL_THRESHOLD      = 30;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
-const int RESET_THRESHOLD       = 18;    
+const int SIGNAL_THRESHOLD      = 20;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
+const int RESET_THRESHOLD       = 15;    
 
 const int LED_BRIGHTNESS        = 255;    // Brightness of the LED [0,255]
 
@@ -142,47 +142,37 @@ void loop()
       jack_on = 1;
     } else {
       jack_on = 0;
-     }
+    }
     
     
     
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
-      theanalogwas = analogRead(A0);
-      
-      // Make a measurement of the pulse amplitude
-      int adc = analogRead(A0);
       // If Master, send a signal to the Slave
       if (MASTER == 1) {
           digitalWrite(6, HIGH);
+          delayMicroseconds(100);      // pauses for  microseconds
           count++;
           keep_pulse = 1;}
 
-      // Wait for ~8us
-      analogRead(A3);
-      
       // If Slave, check for signal from Master
-      
       if (SLAVE == 1){
           countslave++;
+          delayMicroseconds(30);      // pauses for  microseconds
           if (digitalRead(6) == HIGH){
               keep_pulse = 1;
-              count++;}}  
-
+              count++;}}
+          
+      theanalogwas = analogRead(A0);
       
-      // Wait for ~8us
-      analogRead(A3);
+      // Make a measurement of the pulse amplitude
+      int adc = theanalogwas;
 
 
-      // If Master, stop signalling the Slave
-      if (MASTER == 1) {
-          delayMicroseconds(80);      // pauses for  microseconds
-          digitalWrite(6, LOW);}
 
       // Measure the temperature, voltage reference is currently set to 3.3V
       temperatureC = (((analogRead(A3)+analogRead(A3)+analogRead(A3))/3. * (3300./1024)) - 500.)/10. ;
 
-      
       // Measure deadtime
       measurement_deadtime = total_deadtime;
       time_stamp = millis() - start_time;
@@ -230,7 +220,10 @@ void loop()
        */
         continue;}
       
-
+            // If Master, stop signalling the Slave
+      if (MASTER == 1) {
+          digitalWrite(6, LOW);}
+      
       total_deadtime += (micros() - measurement_t1) / 1000.;}}
 }
 
