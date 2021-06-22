@@ -1,0 +1,4 @@
+Mon Jun 21 16:49:14 2021
+0 MASTER ['       0', ' -5', ' -39'] ['    15', ' 5', ' 1'] /dev/ttyUSB0 Cecile
+1 SLAVE ['       0', ' 0', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB2 MattiaCosmicWatch
+2 SLAVE ['       5', ' 0', ' -40'] ['     5', ' 15', ' 1'] /dev/ttyUSB1 Niels

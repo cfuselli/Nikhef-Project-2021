@@ -187,7 +187,7 @@ while True:
                     muon_count += 1
                     print('-- %i Muon(s) detected --' % muon_count)
                     muon.print()
-                    muon.write(file)
+                    #muon.write(file)
 
                     if muon_count % signals_per_file == 0:
                         file_number += 1

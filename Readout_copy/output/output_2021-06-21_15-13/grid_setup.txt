@@ -1,0 +1,5 @@
+Mon Jun 21 15:13:41 2021
+0 MASTER ['       -5', '0', ' 0'] ['\t5', ' 5', ' 1'] /dev/ttyUSB2 Florian
+1 MASTER ['       0', ' -5', ' -39'] ['    15', ' 5', ' 1'] /dev/ttyUSB0 Cecile
+2 MASTER ['       0', ' 5', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB1 rens
+2 MASTER ['       0', ' 0', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB3 MattiaCosmicWatch
