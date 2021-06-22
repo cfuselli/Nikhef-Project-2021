@@ -19,7 +19,7 @@ import io
 # parse path
 parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
 parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
-parser.add_argument('-ignore', nargs='+',default = ['setup'], help='file name patterns to ignore.')
+parser.add_argument('-ignore', nargs='+',default = ['setup','data'], help='file name patterns to ignore.')
 parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
 parser.add_argument('-cw', type=float, default = 0.5, help='acceptance time window for two consecutive readings')
 parser.add_argument('-tw', type=float, default = 1.5, help='total acceptance for a muon')
@@ -42,8 +42,8 @@ def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
     
     # give feedback what files have been read
     while True:
-        usr = input('continue y/N:\n')
-        if 'N' in usr: exit()
+        usr = input('continue y/n:\n')
+        if 'n' in usr: exit()
         elif 'y' in usr: break
         else: continue
         
@@ -70,13 +70,15 @@ def readFiles(files, setup, path=args.path, verbose = True):
     """ read in txt files and fill ROOT tree """
 
     # create ROOT file
-    root_file = ROOT.TFile("%s/output.root"%path, 'RECREATE' )
-    
+    root_fname = "%s/output_cw_%.2f_tw_%.2f.root"%(path,args.cw,args.tw)
+    root_file = ROOT.TFile(root_fname, 'RECREATE' )
+   
     # create tree
-    tree = ROOT.TTree('output', 'output for folder %s'%path)
+    tree = ROOT.TTree('output', 'output for folder %s, consecutive window %f s total window %f s'%(path,args.cw,args.tw))
     
     # pointers
-    number, time = array('i', [0]), array('s', [0.])
+    ##number, time = array('i', [0]), std.string
+    number = array('i', [0])
     timediff_cons1, timediff_cons2, timediff_total = array('f', [0.]), array('f', [0.]), array('f', [0.])
     temp =  array('f', [0.])
     # dict of pointer, each detector has own key
@@ -84,10 +86,10 @@ def readFiles(files, setup, path=args.path, verbose = True):
     
     # create branches 
     tree.Branch( 'number', number, 'number/I')
-    tree.Branch( 'time', time, 'time/S')
-    tree.Branch( 'timediff_cons1', timediff, 'timediff_cons1/F')
-    tree.Branch( 'timediff_cons2', timediff, 'timediff_cons2/F')
-    tree.Branch( 'timediff_total', timediff, 'timediff_total/F')
+    #tree.Branch( 'time', time, 'time/S')
+    tree.Branch( 'timediff_cons1', timediff_cons1, 'timediff_cons1/F')
+    tree.Branch( 'timediff_cons2', timediff_cons2, 'timediff_cons2/F')
+    tree.Branch( 'timediff_total', timediff_total, 'timediff_total/F')
     tree.Branch( 'temp', temp, 'temp/F')
 
     for (detector, pointer) in adcs.items():
@@ -118,7 +120,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
         event = 0
         for l_id, line in enumerate(f_in.readlines()):
             line  = line.split(' ')
-            print(line)
+            #print(line)
             
             # define new event
             # fill tree for each event
@@ -140,7 +142,8 @@ def readFiles(files, setup, path=args.path, verbose = True):
                             event += 1
                         
                             number[0] = event
-                            timediff_cons[0]  = timediff_now
+                            timediff_cons2[0]  = timediff_before
+                            timediff_cons1[0]  = timediff_now
                             timediff_total[0] = _tot_time
                             temp[0] = float(line[3])
                             tree.Fill()
@@ -168,9 +171,13 @@ def readFiles(files, setup, path=args.path, verbose = True):
             '''
 
         f_in.close()    
-        tree.Print()
+        #tree.Print()
         tree.Write()
-    
+
+        
+    root_file.Write()
+    root_file.Close()
+    print("saved to %s"%(root_fname))
     
 
 if __name__ == '__main__':
