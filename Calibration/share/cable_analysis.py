@@ -34,12 +34,14 @@ parser.add_argument('-dist',type=str,default="cable",required=False,
                     help='distinction keyword for classes eg. "cable" (default)')
 parser.add_argument('-dist2',type=str,default=None,required=False,
                     help='distinction 2 keyword for classes eg. None (default)')
+
 parser.add_argument('-label',type=str,default=None,required=False,
                     help='histogram label')
 parser.add_argument('-labeld',type=str,default=None,required=False,
                     help='histogram label2 matching dist')
 parser.add_argument('-labeld2',type=str,default=None,required=False,
                     help='histogram label2 matching dist2')
+
 
 args = parser.parse_args()
 
@@ -76,6 +78,7 @@ def exp_pdf_fit(xdata,ydata,xmin=None,xmax=None,p0=[0.1,0.05]):
     return vals , errs 
     
 
+
 def make_hist(id,data,xname,bins=256,x_range=(0,1023),label=None,alpha=1, FIT = args.fit, NORM = args.norm, color_id = None):
     plt.figure(id)
     
@@ -83,6 +86,7 @@ def make_hist(id,data,xname,bins=256,x_range=(0,1023),label=None,alpha=1, FIT = 
                                                         alpha=alpha,label=label,color = hist_colors[color_id],\
                                                         ec = hist_colors[color_id], histtype='step')
     else: data, bin_x , _ = plt.hist(data,bins=bins,range=x_range,density=NORM,alpha=alpha,label=label)
+
     plt.xlabel(xname)
     plt.ylabel('Entries')
     if label is not None: plt.legend()
@@ -148,10 +152,13 @@ for f in files:
                 timediff_else.extend(timediff)
 
 
-    make_hist(1,adc,'ADC',label=f,bins=128)
-    make_hist(2,timediff,'Time diff [s]',label=f,x_range=(0,60),bins=60)
+    make_hist(1,adc,'ADC',label=f,bins=128,x_range=(0,1023), FIT = args.fit, NORM = args.norm)
+    make_hist(2,timediff,'Time diff [s]',label=f,x_range=(0,5),bins=60, FIT = args.fit, NORM = args.norm)
+
+    #make_hist(5,adc,'ADC',label=f,bins=16,x_range=(0,256), FIT = args.fit, NORM = args.norm)
 
 #plots combining multiple files
+
 
 # make nice labels
 label_scint = 'total %s'%DISTINCTION if args.label is None else args.label
@@ -170,9 +177,11 @@ make_hist(4,timediff_scint,'Time diff [s]',label=label_scint,x_range=time_range,
 print(min(timediff_cable),min(timediff_scint))
 
 if DISTINCTION_2 is not None:
+
     label_else = 'total rest' if args.labeld2 is None else args.labeld2
     make_hist(3,adc_else,'ADC [a.u.]',label=label_else,x_range=adc_range,bins=adc_bins,color_id = 2)
     make_hist(4,timediff_else,'Time diff [s]',label=label_else,x_range=time_range,bins=time_bins,color_id = 2)
+
 
 # close the plot when pressing a key
 plt.draw()
