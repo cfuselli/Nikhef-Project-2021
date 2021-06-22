@@ -85,7 +85,7 @@ grid.detectors.sort(key=sortkey)
 print(grid.info())
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-#grid.plot(ax, show=False)
+# grid.plot(ax, show=False)
 
 
 signals_per_file = int(config['INFO']['signals_per_file'])

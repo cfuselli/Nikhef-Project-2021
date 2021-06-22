@@ -166,12 +166,12 @@ label_scint = 'total %s'%DISTINCTION if args.label is None else args.label
 dist2_label = DISTINCTION_2 if DISTINCTION_2 is not None else "NOT %s"%DISTINCTION
 label_cable = 'total %s'%dist2_label if args.labeld is None else args.labeld
 
-adc_range, adc_bins = (0,1023), 128
+adc_range, adc_bins = (0,1023), 32
 make_hist(3,adc_cable,'ADC [a.u.]',label=label_cable,x_range=adc_range,bins=adc_bins,color_id = 0)
 make_hist(3,adc_scint,'ADC [a.u.]',label=label_scint,x_range=adc_range,bins=adc_bins,color_id = 1)
 
 # timediff
-time_range , time_bins = (0,10), 20
+time_range , time_bins = (0,10), 10
 make_hist(4,timediff_cable,'Time diff [s]',label=label_cable,x_range=time_range,bins=time_bins,color_id = 0)
 make_hist(4,timediff_scint,'Time diff [s]',label=label_scint,x_range=time_range,bins=time_bins,color_id = 1)
 print(min(timediff_cable),min(timediff_scint))
