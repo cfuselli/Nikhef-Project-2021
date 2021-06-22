@@ -24,7 +24,7 @@
 const byte OLED = 1;                      // Turn on/off the OLED [1,0]
 
 // Originally it was 50 and 15
-const int SIGNAL_THRESHOLD      = 50;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
+const int SIGNAL_THRESHOLD      = 30;    // Min threshold to trigger on. See calibration.pdf for conversion to mV.
 const int RESET_THRESHOLD       = 18;    
 
 const int LED_BRIGHTNESS        = 255;    // Brightness of the LED [0,255]
@@ -67,11 +67,12 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
 byte keep_pulse                               = 0;
+byte jack_on                                  = 0;
 
 void setup() {
   analogReference (EXTERNAL);
@@ -131,11 +132,19 @@ void loop()
   while (1){
 
     // This is to check if the jack is working
-    /*
-    if (digitalRead(6) == HIGH){
+    
+   // if (digitalRead(6) == HIGH){
+    //  countpin6++;
+   // }
+    
+   if (digitalRead(6) == HIGH && jack_on == 0 && MASTER == 0){
       countpin6++;
-    }
-    */
+      jack_on = 1;
+    } else {
+      jack_on = 0;
+     }
+    
+    
     
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
@@ -160,11 +169,14 @@ void loop()
               keep_pulse = 1;
               count++;}}  
 
+      
       // Wait for ~8us
       analogRead(A3);
 
+
       // If Master, stop signalling the Slave
       if (MASTER == 1) {
+          delayMicroseconds(80);      // pauses for  microseconds
           digitalWrite(6, LOW);}
 
       // Measure the temperature, voltage reference is currently set to 3.3V
@@ -185,6 +197,8 @@ void loop()
 
       measurement_t1 = micros();
       
+      // analogWrite(3, LED_BRIGHTNESS);
+
       if (MASTER == 1) {
           analogWrite(3, LED_BRIGHTNESS);
           sipm_voltage = get_sipm_voltage(adc);
@@ -260,7 +274,7 @@ void get_time()
 
 //  display.println((String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char);
 
-  display.println("Count: " + (String)count + " [" + (String)countslave + "]");
+  display.println("Count: " + (String)count + " [" + (String)countslave + "]" + " {" + (String)countpin6 +"}");
   display.println("Uptime: " + (String) ((interrupt_timer - start_time) / 1000 / 3600) + ":" + min_char + ":" + sec_char + " (" + analogRead(A0) + ")");
 
   // If you want to see the base signal and the screen is not working

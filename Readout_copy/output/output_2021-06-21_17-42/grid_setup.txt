@@ -1,0 +1,10 @@
+Mon Jun 21 17:42:35 2021
+0 MASTER ['       1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142120 Cecile
+1 SLAVE ['      -1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142140 MattiaCosmicWatch
+2 SLAVE ['       1', ' 1', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142130 Niels
+
+Mon Jun 21 17:49:38 2021(0:07:00.969048)
+0 MASTER ['       1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142120 Cecile
+1 SLAVE ['      -1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142140 MattiaCosmicWatch
+2 SLAVE ['       1', ' 1', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142130 Niels
+
