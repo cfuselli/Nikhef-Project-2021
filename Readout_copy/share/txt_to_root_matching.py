@@ -137,7 +137,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
                     if (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before): # .. in 3 different layers
                     # check the time difference
                         _tot_time = timediff_now + timediff_before
-                        if timediff_now <= args.cw and _tot_time <= args.tw:
+                        if timediff_now <= args.cw and timediff_before <= arg.cw and _tot_time <= args.tw:
                             # if we are here we have three ... save the event
                             event += 1
                         
@@ -148,33 +148,15 @@ def readFiles(files, setup, path=args.path, verbose = True):
                             temp[0] = float(line[3])
                             tree.Fill()
             
-            # assign to pointers
-            #temp[0], timediff[0] = float(line[3]), float(line[4])
-            #adcs["%s_%s"%(detector,layer)][0] = int(line[1])
-            
-            
-            #temp[0], timediff[0], time[0] = float(line[3]), float(line[4]), float(line[5])
-            
-            
-            
             
             layer_2before, detector_2before = layer_1before, detector_1before
             layer_1before, detector_1before = layer, detector
             timediff_before = timediff_now 
-            '''
-            if len(line) == 1:
-                number[0] = i
-                tree.Fill()
-                for detector in adcs: adcs[detector][0] = 0.
-                i += 1
-                continue
-            '''
-
+           
         f_in.close()    
-        #tree.Print()
         tree.Write()
 
-        
+    tree.Write()    
     root_file.Write()
     root_file.Close()
     print("saved to %s"%(root_fname))
