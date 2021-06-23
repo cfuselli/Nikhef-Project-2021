@@ -147,10 +147,9 @@ void loop()
    //   jack_on = 0;
    // }
     
-    theanalogwas = analogRead(A0);
 
     
-    if (theanalogwas > SIGNAL_THRESHOLD){ 
+    if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
       // If Master, send a signal to the Slave
       if (MASTER == 1) {
@@ -178,7 +177,8 @@ void loop()
               count++;}
           }
       
-      
+      theanalogwas = analogRead(A0);
+
       // Make a measurement of the pulse amplitude
       int adc = theanalogwas;
 
