@@ -16,8 +16,7 @@ import regex as re
 import matplotlib.animation as animation
 import io
 
-from class_module import Grid, Detector, Signal, Stack, Muon
-from class_module import serial_ports
+from class_module import *
 
 numbers = re.compile(r'(\d+)')
 
@@ -134,14 +133,15 @@ def update():
         while line != '\n':
             line = line.replace('\n', '')
             lsplit = line.split(' ')
+            print(lsplit)
             det = 0
             # find the right detector to assign
             for d in grid.detectors:
-                if d.name == lsplit[-1]:
+                if d.name == lsplit[9]:
                     det = d
                     break
             if det == 0:
-                strin = 'Unknown detector found ' + lsplit[-1]
+                strin = 'Unknown detector found ' + lsplit[9]
                 exit(strin)
 
             # add the data to each signal
