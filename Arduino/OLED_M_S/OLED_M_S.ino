@@ -171,7 +171,6 @@ void loop()
           if (digitalRead(6) == HIGH){ yes = 1; }
           if (digitalRead(6) == HIGH){ yes = 1; }
           if (digitalRead(6) == HIGH){ yes = 1; }
-          
           if ( yes==1 ){
               keep_pulse = 1;
               count++;}
@@ -236,9 +235,6 @@ void loop()
       
             // If Master, stop signalling the Slave
       if (MASTER == 1) {
-          analogRead(A3);
-          analogRead(A3);
-          analogRead(A3);
           digitalWrite(6, LOW);}
       
       total_deadtime += (micros() - measurement_t1) / 1000.;}}
