@@ -81,8 +81,13 @@ def readFiles(files, setup, path=args.path, verbose = True):
     number = array('i', [0])
     timediff_cons1, timediff_cons2, timediff_total = array('f', [0.]), array('f', [0.]), array('f', [0.])
     temp =  array('f', [0.])
-    # dict of pointer, each detector has own key
+
+    # muons: dict of pointer, each detector has own key
     adcs = {detector: array('f', [0.]) for detector in setup}
+    adcs_buff = {detector: array('f', [0.]) for detector in setup}
+
+    # muons: dict of pointer, each detector has own key
+    adcs_raw = {"%s_raw"%detector: array('f', [0.]) for detector in setup}
     
     # create branches 
     tree.Branch( 'number', number, 'number/I')
@@ -91,10 +96,12 @@ def readFiles(files, setup, path=args.path, verbose = True):
     tree.Branch( 'timediff_cons2', timediff_cons2, 'timediff_cons2/F')
     tree.Branch( 'timediff_total', timediff_total, 'timediff_total/F')
     tree.Branch( 'temp', temp, 'temp/F')
-
-    for (detector, pointer) in adcs.items():
-        print("%s/F"%detector)
-        tree.Branch(detector, pointer, "%s/F"%detector)
+    # for adcs of an event
+    for (detector, pointer) in adcs.items():  tree.Branch(detector, pointer, "%s/F"%detector)
+    # raw adcs
+    for (detector, pointer) in adcs_raw.items():
+        print("Branch -> %s/F"%detector)
+        tree.Branch("%s_raw"%detector, pointer, "%s_raw/F"%detector)
     print("Created branches...")
     
     
@@ -115,38 +122,52 @@ def readFiles(files, setup, path=args.path, verbose = True):
         # new event 
         layer_1before, detector_1before = None, None
         layer_2before, detector_2before = None, None
-        timediff_now , timediff_before = None, None
+        timediff_now, timediff_before = None, None
         
         event = 0
         for l_id, line in enumerate(f_in.readlines()):
             line  = line.split(' ')
             #print(line)
+
             
-            # define new event
-            # fill tree for each event
             
+            # define new event            
             # could this be a muon? 
             layer, detector , timediff_now = int(line[0]), line[-2], float(line[4])
+
+            # fill raw adcs always
+            adcs_raw["%s_%s_raw"%(detector,layer)][0] = int(line[1])
             
-            # save the adc to the corresponding branch
-            adcs["%s_%s"%(detector,layer)][0] = int(line[1])
+            # buffer the save the adc to the corresponding branch in order not to coutn events multiple times for non-muons
+            adcs_buff["%s_%s"%(detector,layer)][0] = int(line[1])
+
             
             # check layers and detectors
-            if (detector_1before != detector_2before): # remove 2 consecutive detector readings
-                if (detector != detector_1before) and (detector != detector_2before): # 3 different detectors ...
-                    if (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before): # .. in 3 different layers
-                    # check the time difference
-                        _tot_time = timediff_now + timediff_before
-                        if timediff_now <= args.cw and timediff_before <= args.cw and _tot_time <= args.tw:
+            if ((detector_1before != detector_2before) and  # remove 2 consecutive detector readings
+                (detector != detector_1before) and (detector != detector_2before) and # 3 different detectors ...
+                (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before) and  # .. in 3 different layers
+                (timediff_now <= args.cw and timediff_before <= args.cw and (timediff_now + timediff_before) <= args.tw)):  # check the time difference
                             # if we are here we have three ... save the event
                             event += 1
                         
                             number[0] = event
-                            timediff_cons2[0]  = timediff_before
-                            timediff_cons1[0]  = timediff_now
-                            timediff_total[0] = _tot_time
+                            timediff_cons2[0] = timediff_before
+                            timediff_cons1[0] = timediff_now
+                            timediff_total[0] = timediff_now + timediff_before
                             temp[0] = float(line[3])
+                            adcs_buff = adcs_buff.copy() # fill the buffer to the tree
                             tree.Fill()
+                            for detector in adcs:
+                                adcs[detector][0] = 0.
+                                adcs_buff[detector][0] = 0.
+                            for detector in adcs_raw: adcs_raw[detector][0] = 0.
+                        
+                                
+            else:
+                tree.Fill()
+                for detector in adcs_raw: adcs_raw[detector][0] = 0.
+                            
+                            
             
             
             layer_2before, detector_2before = layer_1before, detector_1before
