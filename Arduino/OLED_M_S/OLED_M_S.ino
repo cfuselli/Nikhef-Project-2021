@@ -67,12 +67,13 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 1; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
 byte keep_pulse                               = 0;
 byte jack_on                                  = 0;
+byte yes                                  = 0;
 
 void setup() {
   analogReference (EXTERNAL);
@@ -131,39 +132,52 @@ void loop()
 {
   while (1){
 
-    // This is to check if the jack is working
+   // This is to check if the jack is working
     
    // if (digitalRead(6) == HIGH){
-    //  countpin6++;
+   //  countpin6++;
+   // }
+
+   //if (MASTER == 0){
+   //   if (digitalRead(6) == HIGH)
+   //if (digitalRead(6) == HIGH && jack_on == 0 && MASTER == 0){
+   //   countpin6++;
+   //   jack_on = 1;
+   // } else {
+   //   jack_on = 0;
    // }
     
-   if (digitalRead(6) == HIGH && jack_on == 0 && MASTER == 0){
-      countpin6++;
-      jack_on = 1;
-    } else {
-      jack_on = 0;
-    }
+    theanalogwas = analogRead(A0);
+
     
-    
-    
-    if (analogRead(A0) > SIGNAL_THRESHOLD){ 
+    if (theanalogwas > SIGNAL_THRESHOLD){ 
       
       // If Master, send a signal to the Slave
       if (MASTER == 1) {
           digitalWrite(6, HIGH);
-          delayMicroseconds(100);      // pauses for  microseconds
           count++;
           keep_pulse = 1;}
 
       // If Slave, check for signal from Master
       if (SLAVE == 1){
           countslave++;
-          delayMicroseconds(30);      // pauses for  microseconds
-          if (digitalRead(6) == HIGH){
-              keep_pulse = 1;
-              count++;}}
+          yes = 0;
+          // check for ~40microseconds
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
+          if (digitalRead(6) == HIGH){ yes = 1; }
           
-      theanalogwas = analogRead(A0);
+          if ( yes==1 ){
+              keep_pulse = 1;
+              count++;}
+          }
+      
       
       // Make a measurement of the pulse amplitude
       int adc = theanalogwas;
@@ -222,6 +236,9 @@ void loop()
       
             // If Master, stop signalling the Slave
       if (MASTER == 1) {
+          analogRead(A3);
+          analogRead(A3);
+          analogRead(A3);
           digitalWrite(6, LOW);}
       
       total_deadtime += (micros() - measurement_t1) / 1000.;}}
