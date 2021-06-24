@@ -14,13 +14,17 @@ import copy
 import txt_to_root_matching_withbg as helper
 
 
-def readHist(name, rfile, treename = 'output'):
+def readHist(name, rfile, treename = 'output', bins=256, xmin = 0, xmax = 1024):
     """ read hist from open ROOT file, save to open ROOT file """
 
-    def getHist(branch, tree):
-        
+    def getHist(branch, tree, bins=bins, xmin=xmin ,xmax=xmax):
+        """ get histogram from tree """
+        tree.Draw("%s >> %s(%i,%i,%i)"%(branch,branch,bins,xmin,xmax)) # store branch in histogram
+        hist = ROOT.gROOT.FindObject(branch) # get histogram
+        return hist
     
     def styleHist(hist, color,xlabel="ADC", ylabel="Entries"):
+        """ better visuals """
         hist.SetLineColor(color)
         hist.SetLineWidth(2)
         hist.GetXaxis().SetTitle("#font[52] %s"%xlabel)
@@ -28,25 +32,25 @@ def readHist(name, rfile, treename = 'output'):
         return hist
 
     # get tree
-    tree = rfile.Get("treename")
+    tree = rfile.Get(treename)
     
-    # read in in histos
-    signal = rfile.Get(detector)
-    signal = styleHist(signal, ROOT.kRed+1)
+    sg = getHist(name, tree)
+    sg = styleHist(sg, ROOT.kRed+1)
     
-    background = rfile.Get("%s_raw"%detector)
-    background = styleHist(background, ROOT.kBlue+1)
-
+    bg = getHist("%s_raw"%name, tree)
+    bg = styleHist(bg, ROOT.kBlue+1)
     
     # draw
     c = ROOT.TCanvas()
-    signal.Draw("hist")
-    background.Draw("hist")
+    sg.Draw("hist")
+    bg.Draw("hist")
+    c.BuildLegend()
+    c.Update()
     c.Draw()
 
     # let the hists and cv exists outside of function
-    ROOT.SetOwnership(signal,False)
-1    ROOT.SetOwnership(background,False)
+    ROOT.SetOwnership(sg,False)
+    ROOT.SetOwnership(bg,False)
     ROOT.SetOwnership(c,False)
     return c
     
@@ -76,23 +80,9 @@ setup = helper.getSetup(path, filetye='.txt', name = 'grid_setup')
 #detectors = setup if args.detectors[0]=='all' else args.detectors
 #print("reading in ",detectors)
 
+cvs = [readHist(detector) for detector in setup] 
 
-tree = rfile.Get("output")
 
-for b in tree.GetListOfBranches(): print(b.GetName())
-
-c = ROOT.TCanvas()
-
-#test.Draw("hist")
-
-tree.Draw("Carlo_0 >> number(256,0,1024)")
-#for detector in setup:
-number = ROOT.gROOT.FindObject("number")
-
-#   readHist(detector, rfile)
-
-c.Update()
-c.Draw()
 
 # Close files
 rfile.Close()
