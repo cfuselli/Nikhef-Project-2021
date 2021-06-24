@@ -101,7 +101,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
     # raw adcs
     for (detector, pointer) in adcs_raw.items():
         print("Branch -> %s/F"%detector)
-        tree.Branch("%s_raw"%detector, pointer, "%s_raw/F"%detector)
+        tree.Branch("%s_raw"%detector, pointer, "%s/F"%detector)
     print("Created branches...")
     
     
@@ -143,10 +143,11 @@ def readFiles(files, setup, path=args.path, verbose = True):
 
             
             # check layers and detectors
-            if ((detector_1before != detector_2before) and  # remove 2 consecutive detector readings
-                (detector != detector_1before) and (detector != detector_2before) and # 3 different detectors ...
-                (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before) and  # .. in 3 different layers
-                (timediff_now <= args.cw and timediff_before <= args.cw and (timediff_now + timediff_before) <= args.tw)):  # check the time difference
+            if (detector_1before != detector_2before): # remove 2 consecutive detector readings
+                if (detector != detector_1before) and (detector != detector_2before):  # 3 different detectors ...
+                    if (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before):  # .. in 3 different layers
+                        if timediff_now <= args.cw and timediff_before <= args.cw and (timediff_now + timediff_before) <= args.tw:  # check the time difference
+                            print(">>>> muon <<<<")
                             # if we are here we have three ... save the event
                             event += 1
                         
@@ -157,6 +158,10 @@ def readFiles(files, setup, path=args.path, verbose = True):
                             temp[0] = float(line[3])
                             adcs_buff = adcs_buff.copy() # fill the buffer to the tree
                             tree.Fill()
+
+                            for detector,value in adcs_raw.items():
+                                print("muon, fill",detector, value)
+                            
                             for detector in adcs:
                                 adcs[detector][0] = 0.
                                 adcs_buff[detector][0] = 0.
@@ -164,6 +169,9 @@ def readFiles(files, setup, path=args.path, verbose = True):
                         
                                 
             else:
+                #for detector,value in adcs_raw.items():
+                #    print("no muon, fill",detector, value)
+                    
                 tree.Fill()
                 for detector in adcs_raw: adcs_raw[detector][0] = 0.
                             
