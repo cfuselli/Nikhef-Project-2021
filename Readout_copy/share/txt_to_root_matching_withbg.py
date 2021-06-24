@@ -17,18 +17,7 @@ from sys import exit
 import io
 import copy
 
-# parse path
-parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
-parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
-parser.add_argument('-ignore', nargs='+',default = ['setup','data'], help='file name patterns to ignore.')
-parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
-parser.add_argument('-cw', type=float, default = 0.5, help='acceptance time window for two consecutive readings')
-parser.add_argument('-tw', type=float, default = 1.0, help='total acceptance for a muon')
 
-args = parser.parse_args()
-path = args.path
-if path[-1]!='/': path+='/'
-    
 
 
 def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
@@ -252,6 +241,19 @@ def readFiles(files, setup, path=args.path, verbose = True):
     
 
 if __name__ == '__main__':
+    
+    # parse path
+    parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
+    parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
+    parser.add_argument('-ignore', nargs='+',default = ['setup','data'], help='file name patterns to ignore.')
+    parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
+    parser.add_argument('-cw', type=float, default = 0.5, help='acceptance time window for two consecutive readings')
+    parser.add_argument('-tw', type=float, default = 1.0, help='total acceptance for a muon')
+
+    args = parser.parse_args()
+    path = args.path
+    if path[-1]!='/': path+='/'
+    
     files = getFileNames(path, args.ignore, args.filetype)
     setup = getSetup(path)
     readFiles(files, setup, path)
