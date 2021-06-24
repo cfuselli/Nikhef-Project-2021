@@ -27,7 +27,8 @@ parser.add_argument('-tw', type=float, default = 1.0, help='total acceptance for
 
 args = parser.parse_args()
 path = args.path
-
+if path[-1]!='/': path+='/'
+    
 
 
 def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
@@ -109,7 +110,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
         tree.Branch("%s"%detector, pointer, "%s/F"%detector)
     print("Created branches...")
     
-    event = 0
+    tot_event = 0
     # new event 
     layer_1before, detector_1before = None, None
     layer_2before, detector_2before = None, None
@@ -118,36 +119,36 @@ def readFiles(files, setup, path=args.path, verbose = True):
     # iterate over all files
     for nf, f in enumerate(files):
 
-        if nf > 0:
-            print(" read only one file ")
-            break
+        #if nf > 0:
+        #    print(" read only one file ")
+        #    break
         
         # open file
-        print('Processing %s (%i/%i)'%(f,nf+1,len(files)))
+        
         f_in = io.open('%s%s'%(path,f), encoding='utf-8')
         f_in.readline()  # skip header
 
         # read data
-        
+        event = 0
         # # # # # # 
         # FIXME adc to mV and energy conversion....
         # # # # # #
         for l_id, line in enumerate(f_in.readlines()):
             line  = line.split(' ')
 
-            print(l_id)
+            #print(l_id)
 
-            if l_id > 20:
-                print("  ")
-                break
-            if event > 5: break
+            #if l_id > 20:
+            #    print("  ")
+            #    break
+            #if event > 5: break
               
 
             # define new event -  could this be a muon? 
             layer, detector , timediff_now = int(line[0]), line[-2], float(line[4])
             
             # raw adcs are always filled
-            print("raw adc: ","%s_%s_raw"%(detector,layer))
+            #print("raw adc: ","%s_%s_raw"%(detector,layer))
             adcs_raw["%s_%s_raw"%(detector,layer)][0] = int(line[1])
             
             # buffer the save the adc to the corresponding branch in order not to coutn events multiple times for non-muons
@@ -171,57 +172,46 @@ def readFiles(files, setup, path=args.path, verbose = True):
                           
                             # if we are here we have three ... save the event
                             event += 1
-                            print(">>>> %i muon %i<<<<"%(l_id,event))
-                            number[0] = event
+                            #print(">>>> %i muon %i<<<<"%(l_id,event))
 
-                            
+                            # use pointers to fill the tree
+                            number[0] = event
                             timediff_cons2[0] = timediff_before
                             timediff_cons1[0] = timediff_now
-                            timediff_total[0] = timediff_now + timediff_before
-
-                            #print(timediff_before, timediff_now, timediff_before + timediff_now )
-                            
+                            timediff_total[0] = timediff_now + timediff_before                            
                             temp[0] = float(line[3])
-                            adcs = copy.deepcopy(adcs_buff) # fill the buffer to the tree
-                            #print("muon: fill")
-                            #for det,val in adcs.items(): print(det,val)
+                            adcs = copy.deepcopy(adcs_buff) # fill the buffer, nested dict requires deepcopy
+                            
                             tree.Fill()
 
-                            # clear up the pointers
+                            # clear up the pointers so we dont accidentally fill sth twice
                             number[0] = 0
-
-                            
                             timediff_cons2[0] = 0.
                             timediff_cons1[0] = 0.
                             timediff_total[0] = 0.
-
-                    
                             temp[0] = 0.
 
-                            #for det, value in adcs_raw.items():
-                            #    print("muon, fill",det, value)
-                            
                             for det in adcs:
                                 adcs[det][0] = 0.
                                 adcs_buff[det][0] = 0.
-
                             for det in adcs_raw: adcs_raw[det][0] = 0.
 
-                            print("cleaned up after muon")
-                            print("adcs")
-                            for det,val in adcs.items(): print(det,val)
-                            print("adcs buff")
-                            for det,val in adcs_buff.items(): print(det,val)
-                            print("adcs raw")
-                            for det,val in adcs_raw.items(): print(det,val)
+                            #print("cleaned up after muon")
+                            #print("adcs")
+                            #for det,val in adcs.items(): print(det,val)
+                            #print("adcs buff")
+                            #for det,val in adcs_buff.items(): print(det,val)
+                            #print("adcs raw")
+                            #for det,val in adcs_raw.items(): print(det,val)
                             
                         
                                 
             else:
+                # no muon detected, save the adc for background
                 #for detector,value in adcs_raw.items():
                 #    print("no muon, fill",detector, value)
-                print("<<<<<< no muon, fill >>>>")
-                for det,val in adcs.items(): print(det,val)
+                #print("<<<<<< no muon, fill >>>>")
+                #for det,val in adcs.items(): print(det,val)
                 
                 tree.Fill()
                 for det in adcs_raw: adcs_raw[det][0] = 0.
@@ -241,16 +231,24 @@ def readFiles(files, setup, path=args.path, verbose = True):
             layer_2before, detector_2before = layer_1before, detector_1before
             layer_1before, detector_1before = layer, detector
             timediff_before = timediff_now
-
-        print("toal muons: ",f,event)
+            pass
+        
+        print('Processed %s (%i/%i)'%(f,nf+1,len(files)),"muon events: ",f,event)
            
-        f_in.close()    
-        tree.Write()
+        f_in.close()
+        tot_event+=event
+        #tree.Write()
+        tree.Write("", ROOT.TFile.kOverwrite)
 
-    tree.Write()    
+      
     root_file.Write()
     root_file.Close()
     print("saved to %s"%(root_fname))
+    print("read in %s"%path)
+    print("consecutive window: %.4f s"%args.cw)
+    print("total window:       %.4f s"%args.tw)
+    print("total muon events: ",tot_event)
+    print("="*30)
     
 
 if __name__ == '__main__':
