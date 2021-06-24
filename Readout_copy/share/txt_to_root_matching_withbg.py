@@ -18,9 +18,7 @@ import io
 import copy
 
 
-
-
-def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
+def getFileNames(path, ignore=['setup','data'],filetype='.txt'):
     """ get all file names in given path according to some criteria, requires feeback by user """
     
     files = os.listdir(path) # get file names
@@ -40,7 +38,7 @@ def getFileNames(path, ignore=args.ignore,filetype=args.filetype):
         
     return files
 
-def getSetup(path, filetye=args.filetype, name = 'grid_setup'):
+def getSetup(path, filetye='.txt', name = 'grid_setup'):
     """ extract the used detectors from grid_setup.txt file """
     setup = []
     f = io.open("%s%s.txt"%(path,name), encoding = 'utf-8')
@@ -57,15 +55,15 @@ def getSetup(path, filetye=args.filetype, name = 'grid_setup'):
 
 
 
-def readFiles(files, setup, path=args.path, verbose = True):
+def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     """ read in txt files and fill ROOT tree """
 
     # create ROOT file
-    root_fname = "%s/output_cw_%.2f_tw_%.2f.root"%(path,args.cw,args.tw)
+    root_fname = "%s/output_cw_%.2f_tw_%.2f.root"%(path,cw,tw)
     root_file = ROOT.TFile(root_fname, 'RECREATE' )
    
     # create tree
-    tree = ROOT.TTree('output', 'output for folder %s, consecutive window %f s total window %f s'%(path,args.cw,args.tw))
+    tree = ROOT.TTree('output', 'output for folder %s, consecutive window %f s total window %f s'%(path,cw,tw))
     
     # pointers
     ##number, time = array('i', [0]), std.string
@@ -152,12 +150,7 @@ def readFiles(files, setup, path=args.path, verbose = True):
             if (( detector_1before != detector_2before ) and
                ( detector != detector_1before ) and ( detector != detector_2before ) and
                ( layer_1before != layer_2before ) and ( layer != layer_1before ) and ( layer != layer_2before ) and 
-               ( timediff_now <= args.cw ) and ( timediff_before <= args.cw ) and (timediff_now + timediff_before) <= args.tw ):
-            #if (detector_1before != detector_2before): # remove 2 consecutive detector readings
-            #    if (detector != detector_1before) and (detector != detector_2before):  # 3 different detectors ...
-            #        if (layer_1before != layer_2before) and (layer != layer_1before) and (layer != layer_2before):  # .. in 3 different layers
-            #            if timediff_now <= args.cw and timediff_before <= args.cw and (timediff_now + timediff_before) <= args.tw:  # check the time difference
-               
+               ( timediff_now <= cw ) and ( timediff_before <= cw ) and (timediff_now + timediff_before) <= tw ):              
                           
                             # if we are here we have three ... save the event
                             event += 1
@@ -234,8 +227,8 @@ def readFiles(files, setup, path=args.path, verbose = True):
     root_file.Close()
     print("saved to %s"%(root_fname))
     print("read in %s"%path)
-    print("consecutive window: %.4f s"%args.cw)
-    print("total window:       %.4f s"%args.tw)
+    print("consecutive window: %.4f s"%cw)
+    print("total window:       %.4f s"%tw)
     print("total muon events: ",tot_event)
     print("="*30)
     
@@ -247,8 +240,8 @@ if __name__ == '__main__':
     parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
     parser.add_argument('-ignore', nargs='+',default = ['setup','data'], help='file name patterns to ignore.')
     parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
-    parser.add_argument('-cw', type=float, default = 0.5, help='acceptance time window for two consecutive readings')
-    parser.add_argument('-tw', type=float, default = 1.0, help='total acceptance for a muon')
+    parser.add_argument('-cw', type=float, default = 0.1, help='acceptance time window for two consecutive readings')
+    parser.add_argument('-tw', type=float, default = 0.4, help='total acceptance for a muon')
 
     args = parser.parse_args()
     path = args.path
@@ -256,5 +249,5 @@ if __name__ == '__main__':
     
     files = getFileNames(path, args.ignore, args.filetype)
     setup = getSetup(path)
-    readFiles(files, setup, path)
+    readFiles(files, setup, path, arsgs.cw, args.tw)
     
