@@ -249,5 +249,5 @@ if __name__ == '__main__':
     
     files = getFileNames(path, args.ignore, args.filetype)
     setup = getSetup(path)
-    readFiles(files, setup, path, arsgs.cw, args.tw)
+    readFiles(files, setup, path, args.cw, args.tw)
     
