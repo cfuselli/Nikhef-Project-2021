@@ -8,6 +8,8 @@ import serial.tools.list_ports
 import numpy as np
 import random
 
+global text
+
 
 def serial_ports():
     """ Lists serial port names
@@ -256,7 +258,7 @@ class Muon:
         self.layers = []
         self.detectors = []
 
-    def plot(self, ax):
+    def plot(self, ax, text=None):
 
         r = min(self.signals[1].detector.pos[0], self.signals[1].detector.pos[1]) / 2
         rx = random.uniform(-r, r)
@@ -267,6 +269,15 @@ class Muon:
         y = [self.signals[0].detector.pos[1] + rx, self.signals[2].detector.pos[1] + ry]
         z = [self.signals[0].detector.pos[2], self.signals[2].detector.pos[2]]
 
+        adc = max(self.signals[0].adc,
+                  self.signals[1].adc,
+                  self.signals[2].adc)
+
+        adc_linew = int(adc/1023) + 1
+
         # Connect the first two points in the array
-        line = ax.plot(x, y, z, alpha=0.98)
+        line = ax.plot(x, y, z, alpha=0.98, linewidth=adc_linew)
+        stringg = 'ADC: ' + str(adc)
+        text.set_text(stringg)
+
         return line
