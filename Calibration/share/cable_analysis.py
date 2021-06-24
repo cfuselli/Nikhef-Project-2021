@@ -36,9 +36,9 @@ parser.add_argument('-dist2',type=str,default=None,required=False,
                     help='distinction 2 keyword for classes eg. None (default)')
 
 parser.add_argument('-label',type=str,default=None,required=False,
-                    help='histogram label')
+                    help='histogram label matching dist')
 parser.add_argument('-labeld',type=str,default=None,required=False,
-                    help='histogram label2 matching dist')
+                    help='histogram label2 matching NOT dist ')
 parser.add_argument('-labeld2',type=str,default=None,required=False,
                     help='histogram label2 matching dist2')
 
@@ -52,7 +52,7 @@ fit_colors = ["blue", "red", "green"]
 
 def fit_func(x, a, b):
     """ exp. pdf fct """
-    y = a*np.exp(b*x)
+    y = a*np.exp(-b*x)
     return y
 
 def exp_pdf_fit(xdata,ydata,xmin=None,xmax=None,p0=[0.1,0.05]):
@@ -66,7 +66,7 @@ def exp_pdf_fit(xdata,ydata,xmin=None,xmax=None,p0=[0.1,0.05]):
         xdata = xdata[ind]
         ydata = ydata[ind]
         
-    popt, pcov = curve_fit(fit_func, xdata, ydata, p0 = p0)
+    popt, pcov = curve_fit(fit_func, xdata, ydata, p0 = p0, bounds=(0., [2., 2.]))
     
     # print out the fit params
     print('par, par err\n%s'%(20*'='))
@@ -88,21 +88,30 @@ def make_hist(id,data,xname,bins=256,x_range=(0,1023),label=None,alpha=1, FIT = 
     else: data, bin_x , _ = plt.hist(data,bins=bins,range=x_range,density=NORM,alpha=alpha,label=label)
 
     plt.xlabel(xname)
-    plt.ylabel('Entries')
+    if NORM: plt.ylabel("Normalised Entries")
+    else: plt.ylabel('Entries')
     if label is not None: plt.legend()
 
     
     # fit time diff distr
-    if "Time" in xname and FIT:
+    if FIT:
         bin_centers = np.array([(bin_x[i]+bin_x[i+1]) for i in range(len(bin_x)-1)]) * 0.5
         
-        xmin, xmax = 0.5, 5
+        if "Time" in xname: xmin, xmax , p0 = 0.5, 25, [0.1,0.05]
+        elif "ADC" in xname: xmin, xmax, p0 = 50, 700, [0.01,0.001]
+        else: xmin, xmax = -np.inf, np.inf
         vals, errs = exp_pdf_fit(bin_centers, data, xmin, xmax)
         xplot = np.linspace(xmin,xmax,bins*2)
         label="%s Fit $a * e^{-\lambda x}$\n"%label
-        label+="$a$ = (%.1f$\pm$%.1f)\n"%(vals[0],errs[0])
-        label+="$\lambda$ = (%.2f$\pm$%.2f)"%(vals[1],errs[1])
-        if color_id is not None: plt.plot(xplot, fit_func(xplot, *vals), label = label,color = fit_colors[color_id]) 
+        if "Time" in xname: 
+            label+="$a$ = (%.1f$\pm$%.1f)\n"%(vals[0],errs[0])
+            label+="$\lambda$ = (%.2f$\pm$%.2f)"%(vals[1],errs[1])
+        elif "ADC" in xname:
+            label+="$a$ = (%.1e$\pm$%.1e)\n"%(vals[0],errs[0])
+            label+="$\lambda$ = (%.2e$\pm$%.2e)"%(vals[1],errs[1])
+        if color_id is not None: 
+            plt.plot(xplot, fit_func(xplot, *vals),\
+                     label=label,linestyle='dashed',color = fit_colors[color_id]) 
         else: plt.plot(xplot, fit_func(xplot, *vals), label = label) 
     plt.legend()
     
@@ -167,20 +176,20 @@ dist2_label = DISTINCTION_2 if DISTINCTION_2 is not None else "NOT %s"%DISTINCTI
 label_cable = 'total %s'%dist2_label if args.labeld is None else args.labeld
 
 adc_range, adc_bins = (0,1023), 32
-make_hist(3,adc_cable,'ADC [a.u.]',label=label_cable,x_range=adc_range,bins=adc_bins,color_id = 0)
-make_hist(3,adc_scint,'ADC [a.u.]',label=label_scint,x_range=adc_range,bins=adc_bins,color_id = 1)
+make_hist(3,adc_cable,'ADC',label=label_cable,x_range=adc_range,bins=adc_bins,color_id = 0)
+make_hist(3,adc_scint,'ADC',label=label_scint,x_range=adc_range,bins=adc_bins,color_id = 1)
 
 # timediff
-time_range , time_bins = (0,10), 10
-make_hist(4,timediff_cable,'Time diff [s]',label=label_cable,x_range=time_range,bins=time_bins,color_id = 0)
-make_hist(4,timediff_scint,'Time diff [s]',label=label_scint,x_range=time_range,bins=time_bins,color_id = 1)
-print(min(timediff_cable),min(timediff_scint))
+time_range , time_bins = (0,30), 30
+make_hist(4,timediff_cable,'Time difference between two counts ($\geq$ 0.5s) [s]',label=label_cable,x_range=time_range,bins=time_bins,color_id = 0)
+make_hist(4,timediff_scint,'Time difference between two counts ($\geq$ 0.5s) [s]',label=label_scint,x_range=time_range,bins=time_bins,color_id = 1)
+
 
 if DISTINCTION_2 is not None:
 
     label_else = 'total rest' if args.labeld2 is None else args.labeld2
-    make_hist(3,adc_else,'ADC [a.u.]',label=label_else,x_range=adc_range,bins=adc_bins,color_id = 2)
-    make_hist(4,timediff_else,'Time diff [s]',label=label_else,x_range=time_range,bins=time_bins,color_id = 2)
+    make_hist(3,adc_else,'ADC',label=label_else,x_range=adc_range,bins=adc_bins,color_id = 2)
+    make_hist(4,timediff_else,'Time difference between two counts ($\geq$ 0.5s) [s]',label=label_else,x_range=time_range,bins=time_bins,color_id = 2)
 
 
 # close the plot when pressing a key

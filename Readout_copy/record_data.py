@@ -24,7 +24,7 @@ stack = Stack(2)
 # read config from setup.ini (READ README.md)
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
-config.read('setup.ini', encoding='utf-8')
+config.read('setup_angle.ini', encoding='utf-8')
 config_detectors = list(config.items(section='DETECTORS'))
 
 
@@ -187,7 +187,7 @@ while True:
                     muon_count += 1
                     print('-- %i Muon(s) detected --' % muon_count)
                     muon.print()
-                    muon.write(file)
+                    #muon.write(file)
 
                     if muon_count % signals_per_file == 0:
                         file_number += 1
