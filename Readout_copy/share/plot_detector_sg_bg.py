@@ -27,8 +27,8 @@ def readHist(name, rfile, treename = 'output', bins=256, xmin = 0, xmax = 1024):
         """ better visuals """
         hist.SetLineColor(color)
         hist.SetLineWidth(2)
-        hist.GetXaxis().SetTitle("#font[52] %s"%xlabel)
-        hist.GetXaxis().SetTitle("#font[52] %s"%ylabel)
+        hist.GetXaxis().SetTitle("#font[52]{%s}"%xlabel)
+        hist.GetXaxis().SetTitle("#font[52]{%s}"%ylabel)
         return hist
 
     # get tree
@@ -43,7 +43,7 @@ def readHist(name, rfile, treename = 'output', bins=256, xmin = 0, xmax = 1024):
     # draw
     c = ROOT.TCanvas()
     sg.Draw("hist")
-    bg.Draw("hist")
+    bg.Draw("hist same")
     c.BuildLegend()
     c.Update()
     c.Draw()
@@ -53,40 +53,41 @@ def readHist(name, rfile, treename = 'output', bins=256, xmin = 0, xmax = 1024):
     ROOT.SetOwnership(bg,False)
     ROOT.SetOwnership(c,False)
     return c
-    
 
-# parse path
-parser = argparse.ArgumentParser(description='display signal and background ADC and mV histograms read from root file')
-parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
-parser.add_argument('-name', type=str, default = '', help='File to read in.')
-#parser.add_argument('-detectors', nargs='+',type=str,default = ['all'], help='detectors to display, default all')
+if __name__ == '__main__':
 
-# io
-args = parser.parse_args()
-path = args.path
-if path[-1]!='/': path+='/'
-name = args.name
-if name[-5:]!='.root': name+='.root'
+    # parse path
+    parser = argparse.ArgumentParser(description='display signal and background ADC and mV histograms read from root file')
+    parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
+    parser.add_argument('-name', type=str, default = '', help='File to read in.')
+    #parser.add_argument('-detectors', nargs='+',type=str,default = ['all'], help='detectors to display, default all')
 
-
-# open ROOT file to read ...
-rfile = ROOT.TFile.Open(path+name ,"READ")
-# ... and one to save the hist to
-wfile = ROOT.TFile(path+name[:-5]+'_hist.root', 'RECREATE' )
-
-setup = helper.getSetup(path, filetye='.txt', name = 'grid_setup')
-#print("file contains detectors:")
-#for d in setup: print(d)
-#detectors = setup if args.detectors[0]=='all' else args.detectors
-#print("reading in ",detectors)
-
-cvs = [readHist(detector) for detector in setup] 
+    # io
+    args = parser.parse_args()
+    path = args.path
+    if path[-1]!='/': path+='/'
+    name = args.name
+    if name[-5:]!='.root': name+='.root'
 
 
+    # open ROOT file to read ...
+    rfile = ROOT.TFile.Open(path+name ,"READ")
+    # ... and one to save the hist to
+    wfile = ROOT.TFile(path+name[:-5]+'_hist.root', 'RECREATE' )
 
-# Close files
-rfile.Close()
-wfile.Close()
+    setup = helper.getSetup(path, filetye='.txt', name = 'grid_setup')
+    #print("file contains detectors:")
+    #for d in setup: print(d)
+    #detectors = setup if args.detectors[0]=='all' else args.detectors
+    #print("reading in ",detectors)
 
-input()
-print("Goodbye")
+    cvs = [readHist(detector, rfile) for detector in setup] 
+
+
+
+    # Close files
+    rfile.Close()
+    wfile.Close()
+
+    input()
+    print("Goodbye")
