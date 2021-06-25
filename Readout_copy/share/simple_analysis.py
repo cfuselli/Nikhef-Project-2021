@@ -16,29 +16,20 @@ parser.add_argument('-header', type=int, default = 1, help='header')
 #parser.add_argument('-tw', type=float, default = 0.4, help='total acceptance for a muon')
 
 
-def makeHist(data_list,labels,bins=32,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 32 ADC",normalize=False):
-    print(data_list)
-    plt.figure()
-    for i,data in enumerate(data_list):
-        plt.hist(data,bins=bins,range=binrange,label=labels[i],density=normalize,histtype='step')
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.legend()
-
 args = parser.parse_args()
 path = args.path
 if path[-1]!='/': path+='/'
 
 files = txthelper.getFileNames(path, args.ignore, args.filetype)
-setup = txthelper.getSetup(path)
+setup_layer = txthelper.getSetup(path)
 
-setup = [detector.split('_')[0] for detector in setup]
+setup = [detector.split('_')[0] for detector in setup_layer]
 print(setup,files)
 
 
 adcs = {detector : [] for detector in setup}
 time = {detector : [] for detector in setup}
-mV = {detector : [] for detector in setup}
+mVs = {detector : [] for detector in setup}
 print(adcs,time)
     
 
@@ -62,15 +53,26 @@ for f in files:
             detector = line[-2]
             adc = int(line[1])
             adcs[detector].append(adc)
-            print(conv.adc2mv(detector,adc))
-            #mV[detector].append(float(line[4]))
+            mVs[detector].append(conv.adc2mv(detector,adc))
             time[detector].append(float(line[4]))
             
 #print(len(adcs[setup[0]]),len(time))
 
+def makeHist(data_list,labels,name='',bins=32,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 32 ADC",normalize=False,path=args.path):
+    print(data_list)
+    plt.figure()
+    for i,data in enumerate(data_list):
+        plt.hist(data,bins=bins,range=binrange,label=labels[i],density=normalize,histtype='step')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend()
+    plt.savefig("%s/%s.png"%(path,name), dpi=300)
 
-makeHist([adc for adc in adcs.values()],[det for det in adcs.keys()],
-         bins=32,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 32 ADC",normalize=False)
+# adc plots
+makeHist([adc for adc in adcs.values()],[det for det in setup_layer],name="adc",
+         bins=16,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 64 ADC",normalize=False)
+makeHist([mv for mv in mVs.values()],[det for det in adcs.keys()],name="adc",
+         bins=16,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 64 ADC",normalize=False)
     
 # close the plot when pressing a key
 plt.draw()
