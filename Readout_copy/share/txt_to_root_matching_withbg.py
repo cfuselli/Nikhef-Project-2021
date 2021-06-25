@@ -58,7 +58,6 @@ def getSetup(path, filetye='.txt', name = 'grid_setup'):
     return setup
 
 
-
 def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     """ read in txt files and fill ROOT tree """
 
@@ -78,27 +77,33 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     # muons: dict of pointer, each detector has own key
     adcs = {detector: array('i', [-1]) for detector in setup}
     adcs_buff = {detector: array('i', [-1]) for detector in setup}
+    # 
+    mv = {"%s_mV"%detector: array('f', [-1]) for detector in setup}
+    mv_buff = {"%s_mV"%detector: array('f', [-1]) for detector in setup}
 
-    # muons: dict of pointer, each detector has own key
-    adcs_raw = {"%s_raw"%detector: array('i', [-1]) for detector in setup}
+    # all events dict of pointer, each detector has own key
+    adcs_raw = {"%s_bg"%detector: array('i', [-1]) for detector in setup}
+    mv_raw = {"%s_bg"%detector: array('f', [-1]) for detector in setup}
 
     
-    # create branches 
+    # create branches ...
     tree.Branch( 'number', number, 'number/I')
-    #tree.Branch( 'time', time, 'time/S')
     tree.Branch( 'timediff_cons1', timediff_cons1, 'timediff_cons1/F')
     tree.Branch( 'timediff_cons2', timediff_cons2, 'timediff_cons2/F')
     tree.Branch( 'timediff_total', timediff_total, 'timediff_total/F')
-    tree.Branch( 'temp', temp, 'temp/F')
+    tree.Branch( 'temp', temp, 'temperature/F')
     
-    # for adcs of an event
-    for (detector, pointer) in adcs.items():
-        tree.Branch("%s"%detector, pointer, "%s/I"%detector)
-    # raw adcs
-    for (detector, pointer) in adcs_raw.items():
-        print("Branch -> %s(_raw)/I"%detector)
-        tree.Branch("%s"%detector, pointer, "%s/I"%detector)
-    print("Created branches...")
+    # ... muons
+    for (detector, pointer) in adcs.items(): tree.Branch(detector, pointer, "%s/I"%detector)
+    for (detector, pointer) in mv.items():   tree.Branch(detector, pointer, "%s/F"%detector) 
+    # ... and events
+    for (detector, pointer) in adcs_raw.items(): tree.Branch(detector, pointer, "%s/I"%detector)
+    for (detector, pointer) in mv_raw.items():   tree.Branch(detector, pointer, "%s/F"%detector)
+
+    
+    print("Created branches for detectors...")
+    for key in adcs: print(key)
+    
     
     tot_event = 0
     # new event 
@@ -136,7 +141,8 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
             
             # raw adcs are always filled
             #print("raw adc: ","%s_%s_raw"%(detector,layer))
-            adcs_raw["%s_%s_raw"%(detector,layer)][0] = int(line[1])
+            adcs_raw["%s_%s_sg"%(detector,layer)][0] = int(line[1])
+            #mv_raw["%s_%s_sg"%(detector,layer)][0] = #
             
             # buffer the save the adc to the corresponding branch in order not to count events multiple times for non-muons
             adcs_buff["%s_%s"%(detector,layer)][0] = int(line[1])
