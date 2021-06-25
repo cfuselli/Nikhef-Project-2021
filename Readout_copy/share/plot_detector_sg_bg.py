@@ -49,12 +49,20 @@ def readHist(names, rfile, treename = 'output', bins=32, xmin = 0, xmax = 1024, 
     c.BuildLegend() # make this better
     c.Update()
     c.Draw()
+    
 
     # let the hists and cv exists outside of function
     #ROOT.SetOwnership(sg,False)
     #ROOT.SetOwnership(bg,False)
     for hist in hists: ROOT.SetOwnership(hist,False)
     ROOT.SetOwnership(c,False)
+    
+    # ave plot
+    cname = ''
+    for name in names: cname += name
+    c.SaveAs("%s.C"%cname)
+    c.SaveAs("%s.root"%cname)
+    c.SaveAs("%s.PDF"%cname)
     return c
 
 if __name__ == '__main__':
@@ -90,12 +98,16 @@ if __name__ == '__main__':
     #print("reading in ",detectors)
 
     # signal background plots
-    sg_bg = [readHist([detector,'%s_raw'%detector], rfile, ymax = 0.1) for detector in setup]
+    sg_bg_ADC = [readHist([detector,'%s_bg'%detector], rfile, ymax = 0.1) for detector in setup]
+    sg_bg_mv = [readHist([detector,'%s_bg'%detector], rfile, ymax = 0.1) for detector in setup] # how to get mv FIXME
     #sg = [readHist([detector], rfile) for detector in setup] 
     #bg = [readHist(['%s_raw'%detector], rfile) for detector in setup] 
     # time differnce
     time = readHist(['timediff_cons1','timediff_cons2','timediff_total'], rfile, bins=50, xmin = 0., xmax = 0.5, xlabel = "Time difference [s]")
-
+    # TODO check why this has weird limits
+    
+    # overlay detctors
+    sg_mV = [readHist([detector,'%s_bg'%detector], rfile, ymax = 0.1) for detector in setup]
 
     # Close files
     rfile.Close()

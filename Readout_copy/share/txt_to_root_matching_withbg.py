@@ -20,6 +20,7 @@ from natsort import natsorted # for file name sorting
 from sys import exit
 import io
 import copy
+import converter 
 
 
 def getFileNames(path, ignore=['setup','data'],filetype='.txt'):
@@ -60,6 +61,9 @@ def getSetup(path, filetye='.txt', name = 'grid_setup'):
 
 def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     """ read in txt files and fill ROOT tree """
+
+    # get calibration constants
+    conv = converter.Converter()
 
     # create ROOT file
     root_fname = "%s/output_cw_%.2f_tw_%.2f.root"%(path,cw,tw)
@@ -141,11 +145,14 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
             
             # raw adcs are always filled
             #print("raw adc: ","%s_%s_raw"%(detector,layer))
-            adcs_raw["%s_%s_sg"%(detector,layer)][0] = int(line[1])
-            #mv_raw["%s_%s_sg"%(detector,layer)][0] = #
+            adc = int(line[1])
+            mv = conv.c.adc2mv(detector.split('_')[0],adc)
+            adcs_raw["%s_%s_sg"%(detector,layer)][0] = adc # int(line[1])
+            mv_raw["%s_%s_sg"%(detector,layer)][0] = mv
             
             # buffer the save the adc to the corresponding branch in order not to count events multiple times for non-muons
-            adcs_buff["%s_%s"%(detector,layer)][0] = int(line[1])
+            adcs_buff["%s_%s"%(detector,layer)][0] = adc # int(line[1])
+            mv_buff["%s_%s"%(detector,layer)][0] = mv# int(line[1])
 
             
             # check layers and detectors
