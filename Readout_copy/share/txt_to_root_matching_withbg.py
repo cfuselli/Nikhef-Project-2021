@@ -9,11 +9,9 @@
 # @haslbeck
 # 18 June 2021 
 
-#import re, array, os
-import os
 
+import os
 import ROOT
-#from ROOT import TFile, TTree, gROOT, AddressOf
 import argparse
 from array import array
 from natsort import natsorted # for file name sorting
@@ -73,21 +71,20 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     tree = ROOT.TTree('output', 'output for folder %s, consecutive window %f s total window %f s'%(path,cw,tw))
     
     # pointers
-    ##number, time = array('i', [0]), std.string
     number = array('i', [0])
     timediff_cons1, timediff_cons2, timediff_total = array('f', [-1.]), array('f', [-1.]), array('f', [-1.])
     temp =  array('f', [-1.])
 
     # muons: dict of pointer, each detector has own key
-    adcs = {detector: array('i', [-1]) for detector in setup}
-    adcs_buff = {detector: array('i', [-1]) for detector in setup}
+    adcs = {detector: array('f', [-1.]) for detector in setup}
+    adcs_buff = {detector: array('f', [-1.]) for detector in setup}
     # 
-    mv = {"%s_mV"%detector: array('f', [-1]) for detector in setup}
-    mv_buff = {"%s_mV"%detector: array('f', [-1]) for detector in setup}
+    mvs = {"%s_mV"%detector: array('f', [-1.]) for detector in setup}
+    mvs_buff = {"%s_mV"%detector: array('f', [-1.]) for detector in setup}
 
     # all events dict of pointer, each detector has own key
-    adcs_raw = {"%s_bg"%detector: array('i', [-1]) for detector in setup}
-    mv_raw = {"%s_bg"%detector: array('f', [-1]) for detector in setup}
+    adcs_raw = {"%s_bg"%detector: array('f', [-1.]) for detector in setup}
+    mvs_raw = {"%s_bg_mV"%detector: array('f', [-1.]) for detector in setup}
 
     
     # create branches ...
@@ -98,22 +95,30 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
     tree.Branch( 'temp', temp, 'temperature/F')
     
     # ... muons
-    for (detector, pointer) in adcs.items(): tree.Branch(detector, pointer, "%s/I"%detector)
-    for (detector, pointer) in mv.items():   tree.Branch(detector, pointer, "%s/F"%detector) 
+    for (detector, pointer) in adcs.items():
+        tree.Branch(detector, pointer, "%s/F"%detector)
+        print(detector)
+    for (detector, pointer) in mvs.items():
+        tree.Branch(detector, pointer, "%s/F"%detector)
+        print(detector)
     # ... and events
-    for (detector, pointer) in adcs_raw.items(): tree.Branch(detector, pointer, "%s/I"%detector)
-    for (detector, pointer) in mv_raw.items():   tree.Branch(detector, pointer, "%s/F"%detector)
-
+    for (detector, pointer) in adcs_raw.items():
+        tree.Branch(detector, pointer, "%s/F"%detector)
+        print(detector)
+    for (detector, pointer) in mvs_raw.items():
+        tree.Branch(detector, pointer, "%s/F"%detector)
+        print(detector)
     
     print("Created branches for detectors...")
     for key in adcs: print(key)
     
     
-    tot_event = 0
+    
     # new event 
     layer_1before, detector_1before = None, None
     layer_2before, detector_2before = None, None
     timediff_now, timediff_before = None, None
+    tot_event = 0
     
     # iterate over all files
     for nf, f in enumerate(files):
@@ -145,14 +150,17 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
             
             # raw adcs are always filled
             #print("raw adc: ","%s_%s_raw"%(detector,layer))
-            adc = int(line[1])
-            mv = conv.c.adc2mv(detector.split('_')[0],adc)
-            adcs_raw["%s_%s_sg"%(detector,layer)][0] = adc # int(line[1])
-            mv_raw["%s_%s_sg"%(detector,layer)][0] = mv
+            adc = float(line[1])
+            
+            #print('> ',detector.split('_')[0])
+            
+            mv = conv.adc2mv(detector.split('_')[0],adc)
+            adcs_raw["%s_%s_bg"%(detector,layer)][0] = adc # int(line[1])
+            mvs_raw["%s_%s_bg_mV"%(detector,layer)][0] = mv
             
             # buffer the save the adc to the corresponding branch in order not to count events multiple times for non-muons
             adcs_buff["%s_%s"%(detector,layer)][0] = adc # int(line[1])
-            mv_buff["%s_%s"%(detector,layer)][0] = mv# int(line[1])
+            mvs_buff["%s_%s_mV"%(detector,layer)][0] = mv# int(line[1])
 
             
             # check layers and detectors
@@ -176,7 +184,7 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
                             timediff_total[0] = timediff_now + timediff_before                            
                             temp[0] = float(line[3])
                             adcs = copy.deepcopy(adcs_buff) # fill the buffer, nested dict requires deepcopy
-                            
+                            mvs = copy.deepcopy(mvs_buff)
                             tree.Fill()
 
                             # clear up the pointers so we dont accidentally fill sth twice
@@ -187,19 +195,21 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
                             temp[0] = -1.
 
                             for det in adcs:
-                                adcs[det][0] = -1
-                                adcs_buff[det][0] = -1
-                            for det in adcs_raw: adcs_raw[det][0] = -1
+                                adcs[det][0] = -1.
+                                adcs_buff[det][0] = -1.
+                            for det in adcs_raw: adcs_raw[det][0] = -1.
+                            for det in mvs:
+                                mvs[det][0] = -1.
+                                mvs_buff[det][0] = -1.
 
                             #print("cleaned up after muon")
                             #print("adcs")
                             #for det,val in adcs.items(): print(det,val)
                             #print("adcs buff")
-                            for det,val in adcs_buff.items(): print(det,val)
+                            #for det,val in adcs_buff.items(): print(det,val)
                             #print("adcs raw")
                             #for det,val in adcs_raw.items(): print(det,val)
-                            
-                        
+
                                 
             else:
                 # no muon detected, save the adc for background
@@ -209,8 +219,8 @@ def readFiles(files, setup, path='../output/', cw = 0.1, tw = 0.4):
                 #for det,val in adcs.items(): print(det,val)
                 
                 tree.Fill()
-                for det in adcs_raw: adcs_raw[det][0] = -1
-
+                for det in adcs_raw: adcs_raw[det][0] = -1.
+                for det in mvs_raw: mvs_raw[det][0] = -1.
                 #print("<<<< %i skipped >>>>>: "%(l_id))
                 #print(timediff_before, timediff_now)
                 #print(layer, layer_1before, layer_2before)
