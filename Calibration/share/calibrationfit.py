@@ -33,8 +33,14 @@ args = parser.parse_args()
 if '.csv' in args.in_name: args.in_name = args.in_name[:-4]
 
 
-def fit_func(x, *coeffs):
-    y = np.polyval(coeffs, x)
+#def fit_func(x, *coeffs):
+#    y = np.polyval(coeffs, x)
+#    return y
+    
+def fit_func(x, p0,p1,p2,p3):
+    y = p0 + p1*x + p2*x**2 + p3*x**3  
+    
+    
     return y
 
 def polyfit(xdata,ydata,p0=None,rank=11):
