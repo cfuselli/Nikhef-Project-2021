@@ -10,10 +10,10 @@ import csv
 class Converter():
     """ convert ADC to mV using calibration data extracted by polynomial fit """
     
-    def __init__(self, rfile = 'test_calib_const.csv', path = '../../Calibration/data/',\
+    def __init__(self, rfile = 'test_calib_const.csv', path = '../../Calibration/data/final_calib/',\
                 detectors = ['Carlo','Florian','BenRevival','Franko','Niels',\
                             'M', 'Noor', 'rens', 'MattiaCosmicWatch', 'Cecile', 'ZenBenMaster'],
-                rank = 11, header = 1, verbose = False
+                rank = 11, header = 2, verbose = False
                 ):
         """ save calibration constants per detector """
                 
