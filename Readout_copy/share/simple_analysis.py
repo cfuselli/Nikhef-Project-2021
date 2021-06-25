@@ -72,7 +72,7 @@ def makeHist(data_list,labels,name='',bins=32,binrange=(0,1024),xlabel="ADC",yla
 makeHist([adc for adc in adcs.values()],[det for det in setup_layer],name="adc",
          bins=16,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 64 ADC",normalize=False)
 makeHist([mv for mv in mVs.values()],[det for det in adcs.keys()],name="adc",
-         bins=16,binrange=(0,1024),xlabel="ADC",ylabel="Entries / 64 ADC",normalize=False)
+         bins=None,binrange=None,xlabel="mV (from calibration)",ylabel="Entries",normalize=False)
     
 # close the plot when pressing a key
 plt.draw()
