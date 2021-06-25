@@ -46,16 +46,16 @@ class Converter():
             for (detector, vals) in self.constants.items(): print(detector, [type(val) for val in vals])
 
     def adc2mv(self, detector, adc):
-
-        mv = np.poly(adc, self.constants[detector])
-        
+        """ convert adc to mV using by evaluating the polynomial fit function """
+        coeff = self.constants[detector]
+        mv = np.polyval(coeff, adc)
         return mv
 
 
     
 if __name__ == '__main__':
     c = Converter()
-    c.adc2mv('Carlo',2)
+    print(c.adc2mv('Carlo',2))
     
 
 
