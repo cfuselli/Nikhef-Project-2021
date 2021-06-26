@@ -17,7 +17,7 @@ class Converter():
                              'M', 'Noor', 'rens', 'MattiaCosmicWatch', 'Cecile','Oline',\
                              'dummy'
                              ],
-                rank = 11, header = 2, verbose = False
+                rank = 11, header = 2, verbose = True
                 ):
         """ save calibration constants per detector """
                 
@@ -38,7 +38,9 @@ class Converter():
                 if len(line) == 0: continue # skip empty lines
                 
                 if str(line[0]) in detectors: detector = str(line[0])
-                else: self.constants[detector].append(float(line[0]))
+                else: 
+                    if float(line[0]) == 0. or float(line[0]) == -0.: continue
+                    self.constants[detector].append(float(line[0]))
                 pass
                 
         # convert tp np array 
@@ -51,7 +53,7 @@ class Converter():
     def adc2mv(self, detector, adc):
         """ convert adc to mV using by evaluating the polynomial fit function """
         coeff = self.constants[detector]
-        coeff = np.flip(coeff)
+        #coeff = np.flip(coeff)
         mv = np.polyval(coeff, adc)
         #mv  = 0.
         #for order,par in enumerate(coeff): mv+=par*np.power(adc,order)
