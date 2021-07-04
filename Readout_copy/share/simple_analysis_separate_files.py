@@ -22,7 +22,6 @@ parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to r
 parser.add_argument('-header', type=int, default = 1, help='header')
 parser.add_argument('-title', type=str, default = 'Lead', help='title')
 parser.add_argument('-labels', nargs='+', default = ['0mm', '40mm', '86mm'], help='labels per path.')
-parser.add_argument('-bg', action='store_true', help='background?')
 
 
 args = parser.parse_args()
@@ -88,11 +87,10 @@ def makeHist(data_list,labels,name='',bins=22,binrange=(50,600),\
 
 # separate ADC hists per detectors
 for detector , adc_det in zip(setup_layer,adcs.values()):
-    
     makeHist(data_list = adc_det,
-    title = '%s %s'%(args.title,detector),
-    labels = args.labels.copy(),
-    name="%s_%s"%(detector,args.title), path = './')
+        title = '%s %s'%(args.title,detector),
+        labels = args.labels.copy(),
+        name="%s_%s"%(detector,args.title), path = './')
 
 
 
@@ -101,7 +99,4 @@ plt.draw()
 plt.pause(1)
 input('press any key to close')
 plt.close('all')
-
-
-
 print('goodbye')
