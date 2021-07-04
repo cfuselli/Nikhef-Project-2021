@@ -17,7 +17,7 @@ class Converter():
                              'M', 'Noor', 'rens', 'MattiaCosmicWatch', 'Cecile','Oline',\
                              'dummy'
                              ],
-                rank = 11, header = 2, verbose = True
+                rank = 11, header = 2, verbose = False
                 ):
         """ save calibration constants per detector """
                 
