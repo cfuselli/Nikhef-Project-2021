@@ -1,3 +1,7 @@
+# adc histograms
+# @haslbeck
+# 25th June deep at night...
+
 import argparse
 import numpy as np
 import txt_to_root_matching_withbg as txthelper
@@ -6,18 +10,15 @@ import io
 import matplotlib.pyplot as plt
 
     
-    # parse path
-parser = argparse.ArgumentParser(description='convert all .txt in folder to single root file')
+# parse path
+parser = argparse.ArgumentParser(description='read in txt files to make adc plots')
 parser.add_argument('-path', type=str, required = True, help='relative path to txt files to be read in.')
 parser.add_argument('-ignore', nargs='+',default = ['setup','master'], help='file name patterns to ignore.')
 parser.add_argument('-filetype', type=str, default = '.txt', help='Filetype to read in.')
 parser.add_argument('-header', type=int, default = 1, help='header')
 parser.add_argument('-title', type=str, default = '', help='title')
-parser.add_argument('-bg', action='store_true', help='bg?')
+parser.add_argument('-bg', action='store_true', help='background?')
 
-
-#parser.add_argument('-cw', type=float, default = 0.1, help='acceptance time window for two consecutive readings')
-#parser.add_argument('-tw', type=float, default = 0.4, help='total acceptance for a muon')
 
 
 args = parser.parse_args()
@@ -79,6 +80,7 @@ def makeHist(data_list,labels,name='',bins=32,binrange=(0,1024),\
     plt.legend()
     plt.savefig("%s/%s.png"%(path,name), dpi=300)
     print("%s/%s.png"%(path,name))
+
 
 # adc plots
 nameadc = 'adc_bg_%s'%args.title.replace(' ','_') if args.bg else 'adc_%s'%args.title.replace(' ','_')
