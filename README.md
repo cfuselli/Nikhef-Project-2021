@@ -16,4 +16,16 @@ ali @alisidley -as
 
 mattia @MattiaBosc -mb
 
-oline @OlineRanum -or
+rens @Rensoud -ro
+
+niels @nielsruijter -nr
+
+oline @olineranum -or
+
+marta @MartaStentella -ms
+
+cecile @Cecilevdstappen -cs
+
+lefteris @LefterisMal -lm
+
+theophanes @karofa -tk

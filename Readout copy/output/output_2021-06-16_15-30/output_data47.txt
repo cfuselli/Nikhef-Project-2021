@@ -1,0 +1,21 @@
+# layer adc volt temp timediff time detector_muon_count detector_count detector_name
+0 0 0 0 0 0 236 236 Franko
+1 0 0 0 0 0 83 83 Niels
+2 0 0 0 0 0 80 80 Noor
+
+0 0 0 0 0 0 237 237 Franko
+1 0 0 0 0 0 81 81 CarloCosmicWatch
+2 0 0 0 0 0 80 80 rens
+
+0 0 0 0 0 0 238 238 Franko
+1 0 0 0 0 0 74 74 Cecile
+2 0 0 0 0 0 81 81 Noor
+
+0 0 0 0 0 0 239 239 Franko
+1 0 0 0 0 0 75 75 Cecile
+2 0 0 0 0 0 78 78 ZenBenMaster
+
+0 0 0 0 0 0 240 240 Franko
+1 0 0 0 0 0 84 84 Niels
+2 0 0 0 0 0 81 81 rens
+
