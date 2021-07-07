@@ -1,3 +1,0 @@
-Fri Jun 18 13:34:55 2021
-1 SLAVE ['       0', ' 5', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB0 rens
-2 MASTER ['       0', ' 0', ' 0'] ['       5', ' 5', ' 1'] /dev/ttyUSB1 CarloCosmicWatch

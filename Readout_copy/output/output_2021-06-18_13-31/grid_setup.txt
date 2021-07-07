@@ -1,2 +1,0 @@
-Fri Jun 18 13:31:37 2021
-2 MASTER ['       0', ' 0', ' 0'] ['       5', ' 5', ' 1'] /dev/ttyUSB1 CarloCosmicWatch

@@ -1,6 +1,0 @@
-Thu Jun 24 18:26:30 2021
-0 MASTER ['       5', ' 0', ' 0'] ['\t5', ' 5', ' 1'] /dev/ttyUSB3 Cecile
-1 MASTER [' \t 0', ' 5', ' 0'] ['\t5', ' 5', ' 1'] /dev/ttyUSB4 Franko
-1 MASTER ['       0', ' 5', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB5 rens
-2 MASTER ['       -5', ' 0', '-40'] ['     5', ' 15', ' 1'] /dev/ttyUSB0 Noor
-2 MASTER ['       0', ' 0', ' 3'] ['       0', ' 0', ' 33'] /dev/ttyUSB6 M

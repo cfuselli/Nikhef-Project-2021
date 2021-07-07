@@ -1,4 +1,0 @@
-Wed Jun 23 13:46:23 2021
-1 MASTER ['       0', ' 0', ' 65'] ['\t50', ' 50', ' 10'] /dev/ttyUSB1 Florian
-2 MASTER ['       0', ' 0', ' 105'] ['       50', ' 50', ' 10'] /dev/ttyUSB3 Noor
-2 MASTER ['       0', ' 0', ' 25'] ['        50', ' 50', ' 10'] /dev/ttyUSB2 rens

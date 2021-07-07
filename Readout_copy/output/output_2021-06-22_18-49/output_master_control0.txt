@@ -1,5 +1,0 @@
-# layer adc volt temp timediff time detector_muon_count detector_count detector_name
-0 35 12.75 27.67 10 2021-06-22 18:49:47.193063 0 1 MattiaCosmicWatch 0.258142
-0 48 15.29 27.56 0.033506 2021-06-22 18:49:47.226569 0 2 MattiaCosmicWatch 0.291648
-0 31 12.01 27.67 0.43647 2021-06-22 18:49:47.663039 0 3 MattiaCosmicWatch 0.728118
-0 19 10.33 27.67 2.869088 2021-06-22 18:49:50.532127 0 4 MattiaCosmicWatch 3.597206

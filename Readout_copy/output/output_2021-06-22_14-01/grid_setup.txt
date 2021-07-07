@@ -1,4 +1,0 @@
-Tue Jun 22 14:01:45 2021
-0 MASTER ['       5', ' 0', ' -40'] ['     5', ' 15', ' 1'] /dev/ttyUSB4 Niels
-1 MASTER ['       0', ' 5', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB3 rens
-2 MASTER ['       0', ' 0', ' -39'] ['     15', ' 5', ' 1'] /dev/ttyUSB1 MattiaCosmicWatch
