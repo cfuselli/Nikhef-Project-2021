@@ -1,0 +1,22 @@
+# Variance measures
+##sigma2 = np.sqrt(N_points)
+##sigma2 = np.sum((dat_counts-np.mean(dat_counts))**2)/N_points
+##sigma2 = np.sqrt(np.sum(dat_counts))
+
+sigma2 = np.sqrt(data['counts'])/data['time'] # <- this one!
+# alternatively try
+
+# Reduced Chi2
+chi = np.sum(((dat_counts - n_flux(dat_angels, *popt))**2))/sigma2
+chi_red = chi/(N_points-1)
+
+
+print(chi_red)
+
+# # # #
+# ...
+# # # #
+
+# and then ...
+##plt.plot(dat_angels, dat_counts,'*', ms = 20, label = 'Data')
+plt.errorbar(dat_angels, dat_counts, np.zeros(len(dat_angles)), sigma2, '*', ms = 20, label = 'Data')
