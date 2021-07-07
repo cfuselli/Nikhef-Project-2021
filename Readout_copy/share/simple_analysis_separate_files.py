@@ -39,7 +39,7 @@ setup = [detector.split('_')[0] for detector in setup_layer]
 
 adcs = {detector : [[] for i in range(len(paths))] for detector in setup}
 #time = [] #{detector : [] for detector in setup}
-#mVs = {detector : [] for detector in setup}
+mVs = {detector : [[] for i in range(len(paths))] for detector in setup}
 #print(adcs,time)
     
 
@@ -60,7 +60,7 @@ for j, path in enumerate(paths):
                 detector = line[-2]
                 adc = int(line[1])
                 adcs[detector][j].append(adc)
-                #mVs[detector].append(conv.adc2mv(detector,adc))
+                mVs[detector][j].append(conv.adc2mv(detector,adc))
                 #time.append(float(line[-1]))
   
 
@@ -69,14 +69,14 @@ for j, path in enumerate(paths):
 
 
 def makeHist(data_list,labels,name='',bins=22,binrange=(50,600),\
-                xlabel="ADC",ylabel="Entries / 25 ADC",title=args.title,
+                xlabel="ADC",ylabel="Normalised ntries / 25 ADC",title=args.title,
                 normalize=True,path=args.path):
     """ seperate hists for listed data entries in one single figure """
     plt.figure()
-    
+    color = ['k','r','b']
     for i, data in enumerate(data_list): 
         labels[i]+=' median %.1f'%(np.median(data))
-        plt.hist(data,bins=bins,range=binrange,label=labels[i],density=True,histtype='step')
+        plt.hist(data,bins=bins,range=binrange,label=labels[i],density=True,color = color[i],linewidth = 2, histtype='step')
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -86,12 +86,22 @@ def makeHist(data_list,labels,name='',bins=22,binrange=(50,600),\
 
 
 # separate ADC hists per detectors
-for detector , adc_det in zip(setup_layer,adcs.values()):
+for detector , adc_det, mv_det in zip(setup_layer,adcs.values(),mVs.values()):
+    
+    # adc hist
     makeHist(data_list = adc_det,
         title = '%s %s'%(args.title,detector),
         labels = args.labels.copy(),
         name="%s_%s"%(detector,args.title), path = './')
-
+    
+    # mv hist
+    makeHist(data_list = mv_det,
+        title = '%s %s'%(args.title,detector),
+        labels = args.labels.copy(),
+        name="%s_%s_mV"%(detector,args.title), path = './',
+        bins=30,binrange=(0,300),\
+        xlabel="mV",ylabel="Normalised entries / 10 mV ")
+    
 
 
 # close the plot when pressing a key
