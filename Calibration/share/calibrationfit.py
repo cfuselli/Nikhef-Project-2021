@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 13 14:23:58 2021
 
 @author: NoorKoster
 @author: @haslbeck
@@ -17,17 +16,12 @@ from scipy.optimize import curve_fit
 
 parser = argparse.ArgumentParser(description='calibration fit')
 # input file
-parser.add_argument('-in_name',type=str,
-                    help='csv filename with ADC vs V counts')
-parser.add_argument('-in_path',type=str,default='../data/',required=False,
-                    help='default ../data/')
+parser.add_argument('-in_name',type=str, help='csv filename with ADC vs V counts')
+parser.add_argument('-in_path',type=str,default='../data/',required=False, help='default ../data/')
 # output file
-parser.add_argument('-out_name',type=str,default=None,required=False,
-                    help='calibration constants')
-parser.add_argument('-out_path',type=str,default='../data/calibration/',required=False,
-                    help='default ../data/calibration/')
-parser.add_argument('-header',type=int,default=1,required=False,
-                    help='default 1')
+parser.add_argument('-out_name',type=str,default=None,required=False, help='calibration constants')
+parser.add_argument('-out_path',type=str,default='../data/calibration/',required=False, help='default ../data/calibration/')
+parser.add_argument('-header',type=int,default=1,required=False, help='default 1')
                     
 args = parser.parse_args()
 if '.csv' in args.in_name: args.in_name = args.in_name[:-4]
@@ -39,15 +33,34 @@ def fit_func(x, *coeffs):
 
 def polyfit(xdata,ydata,p0=None,rank=11):
     
-    popt, pcov = curve_fit(fit_func, xdata, ydata, p0 = np.zeros(rank))
+    def chisquared(xdata,ydata,weights,sigma=1,verbose=False):
+      """ calc. chi squared with sigma defined by the noise generator
+      input:  array xdata
+              array ydata
+              array fit_weights: polynomial fit weights of order len(fit_weights)
+              float sigma = 0.25:  sigma of the data points, 0.25 by the generator
+      return: float chi_sq
+      """
+      M = len(weights) # order pol.
+      pred = fit_func(xdata,*weights) # predictions from fit
+
+      chi_sq = np.sum(np.power(ydata-pred,2)) / np.power(sigma,2)
+      dof = len(ydata) + M # degree of freedoms
+      chi_sq_red = chi_sq/dof
+
+      if verbose: print("pol fit order %i: chi squared reduced %.3f"%(M,chi_sq_red))
+      return chi_sq_red
     
+    popt, pcov = curve_fit(fit_func, xdata, ydata, p0 = np.zeros(rank))
+    chi2red = chisquared(xdata,ydata,popt)
     # print out the fit params
     print('name, par, par err\n%s'%(20*'='))
-    for i in range(rank): print('p%i:\t%.3f\t%.3f'%(i,popt[i],pcov[i][i]))
+    for i in range(rank): print('p%i:\t%.3e\t%.3e'%(i,popt[i],np.sqrt(pcov[i][i])))
+    print(chi2red)
     print(20*'=')
     
-    vals , errs = [popt[i] for i in range(rank)], [pcov[i][i] for i in range(rank)]
-    return vals , errs 
+    vals , errs = [popt[i] for i in range(rank)], [np.sqrt(pcov[i][i]) for i in range(rank)]
+    return vals , errs , chi2red
     
 
 
@@ -66,7 +79,6 @@ with open(args.in_path+args.in_name + '.csv') as csvfile:
         # get pulsing ampltidude
         elif len(line) == 2:
             _volt = float(line[1])
-            print(_volt)
             continue
         else: continue
         volt.append(_volt)
@@ -79,45 +91,52 @@ volt, adc= np.array(volt), np.array(adc)
 mV = volt * 1e3 
 
 
-# fit
-vals , errs = polyfit(adc, mV, rank=6)
-
-
-# save values to file
-
-if args.out_name is None: args.out_name = args.in_name + '_calibration'
-savefile = open(args.out_path+args.out_name+'.csv','w')
-#savefile.write("Calibration %s"%det_name) # det_name contains linebreak
-for v, e in zip(vals,errs): savefile.write("%f, %f\n"%(v,e))
-savefile.close()
-print('saved calibration values to %s'%args.out_path+args.out_name+'.csv')
-
-
-
+# fit: degree ranging from degree mmin to mmax
+mmin , mmax = 2, 8
+result = {m: {} for m in range(mmax)}
+print(result)
+for m in range(mmin,mmax-1): result[m]['vals'], result[m]['errs'], result[m]['c2r'] = polyfit(adc, np.log(mV), rank=m)
+    
 
 # plot
 fontsize = 20 
 fig = plt.figure(figsize=(12,7))
 ax = plt.gca()
-ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize)
-ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
+ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize-3)
+ax.tick_params(axis = 'both', which = 'minor', labelsize = 0)
 #plt.title('Detector: %s'%det_name, size=fontsize)
-plt.scatter(adc,mV) # weird x y choice on purpose
+plt.scatter(adc,mV, color = 'k', marker = '.') # weird x y choice on purpose
 
-xplot = np.linspace(np.min(adc),np.max(adc),1000)
-#plt.plot(xplot, fit_func(xplot, *vals), color='r', label='%i'%len(vals))
-#plt.yscale('log')
+
+xplot = np.linspace(50,np.max(adc),1000)
+for m in range(mmin,mmax-1):
+    vals , c2r = result[m]['vals'], result[m]['c2r']
+    plt.plot(xplot, np.exp(fit_func(xplot, *vals)), lw = 2, color=None, label='Polyfit deg. %i, $\chi^2_{red}$=%.1e'%(m,c2r))
+
+
+plt.yscale('log')
 plt.grid(True, which="both")
 plt.ylabel(r'Input pulse amplitude [mV]', size=fontsize)
 plt.xlabel('Measured ADC value [0-1023]', size=fontsize)
+plt.xticks(np.arange(50, 1000, step=50))
 plt.legend()
 
 # close the plot when pressing a key
 plt.draw()
 plt.pause(1)
-input('press any key to close')
-plt.close(fig)
+savem = int(input('which degree should be saved? '))
+print('save ... ',savem)
+plt.close('all')
 
-#   plt.close('all')
+
+
+# save user defined best degree values to file
+if args.out_name is None: args.out_name = args.in_name + '_calibration'
+savefile = open(args.out_path+args.out_name+'.csv','w')
+#savefile.write("Calibration %s"%det_name) # det_name contains linebreak
+for v, e in zip(result[savem]['vals'],result[savem]['errs']): savefile.write("%s, %s\n"%(v,e))
+savefile.close()
+print('saved calibration values to %s'%args.out_path+args.out_name+'.csv')
+
 
 print('goodbye')
