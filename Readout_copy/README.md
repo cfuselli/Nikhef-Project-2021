@@ -29,11 +29,10 @@ Here you also need to specify how many events you want per file and controlfile.
 ----
 ### What is the output? 
 
-- grid_setup.txt: the setup 
+The output of the script is saved into one folder named with the date and time of the measurement. There are three different kind of files in this folder.
 
-- output_data*.txt: list of muons, line separated
+The first one is just a modified copy of the configuration file used to run the program: as the configuration changed a lot from one measurement to the other, it has been very important to always have file in the folder where the setup of the detectors is automatically stored. 
 
-- output_master_control*.txt: raw signals from master(s), plus slaves in coincidence
+There is then another text file where the main results are stored: this is just a list of the muons that were detected during the measurement. Every muon event consists of three lines (one line per every signal, where each signal belongs to detectors of the three different layers), followed by a blank line. The signals of a single event are not ordered in time, but they are sorted by their layer from top to bottom. The script automatically divides these results in different files when the maximum number of events per file is reached (this can be set through the configuration file) to avoid having very large text files that can be difficult to work with.
 
-You can decide how many events you want to record per file. They will be automatically splitted.
-
+The last kind of file (again a text file), is where every signal recorded by every detector is stored. Here it is possible to do some non-live software analysis and to study the background measured by the single detectors. Also these files are separated in multiple ones when they reach a certain amount of lines.
