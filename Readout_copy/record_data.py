@@ -6,7 +6,7 @@ import time
 import configparser
 import serial.tools.list_ports
 import schedule
-import io
+import io, glob
 
 
 # I don't know why this works on the computer of the lab but not on my MacBook (Carlo)

@@ -1,4 +1,0 @@
-Mon Jun 21 17:51:21 2021
-0 MASTER ['       1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142120 Cecile
-1 SLAVE ['      -1', ' 0', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142140 MattiaCosmicWatch
-2 SLAVE ['       1', ' 1', ' 2'] ['       0', ' 0', ' 3'] /dev/tty.usbserial-142130 Niels
