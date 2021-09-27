@@ -240,7 +240,7 @@ class Muon:
     def write(self, f):
         for s in self.signals:
             s.write(f)
-        s.write('\n')
+        f.write('\n')
         f.flush()
 
     def print(self):

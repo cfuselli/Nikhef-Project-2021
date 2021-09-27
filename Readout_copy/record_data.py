@@ -24,7 +24,7 @@ stack = Stack(2)
 # read config from setup.ini (READ README.md)
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
-config.read('setup.ini', encoding='utf-8')
+config.read('setup_angle.ini', encoding='utf-8')
 config_detectors = list(config.items(section='DETECTORS'))
 
 
@@ -171,7 +171,7 @@ while True:
 
             # if last signal is close in time, then maybe it's a muon
             # we do not want a muon to pass two times in the same layer
-            if timediff < 0.05 and stack.isEmpty() is False:
+            if timediff < 0.1 and stack.isEmpty() is False:
                 if detector.layer not in muon.layers and detector.layer != stack.peek(1).detector.layer:
                     # if the signal before was targeted as muon, then this is still part of the same muon
                     if muon.not_empty():
@@ -187,7 +187,7 @@ while True:
                     muon_count += 1
                     print('-- %i Muon(s) detected --' % muon_count)
                     muon.print()
-                    muon.write(file)
+                    #muon.write(file)
 
                     if muon_count % signals_per_file == 0:
                         file_number += 1

@@ -67,7 +67,7 @@ float temperatureC;
 int theanalogwas = 0;
 byte waiting_for_interupt                     = 0;
 ///////////////////////////////////////////////////////////////////////////////////
-byte MASTER_SLAVE                             = 1; // 0 for master, 1 for slave
+byte MASTER_SLAVE                             = 0; // 0 for master, 1 for slave
 ///////////////////////////////////////////////////////////////////////////////////
 byte SLAVE;
 byte MASTER;
@@ -96,9 +96,9 @@ void setup() {
       delay(10);
       MASTER = 1;
       SLAVE = 0;
-      pinMode(6, OUTPUT);
-      digitalWrite(6, HIGH);}
-
+      //pinMode(6, OUTPUT);
+      //digitalWrite(6, HIGH);}
+  }
   if (OLED == 1){
       display.setRotation(2);         // Upside down screen (0 is right-side-up)
       OpeningScreen();                // Run the splash screen on start-up
@@ -107,7 +107,7 @@ void setup() {
 
   else {delay(2000);}
   digitalWrite(3,LOW);
-  if (MASTER == 1) {digitalWrite(6, LOW);}
+  //if (MASTER == 1) {digitalWrite(6, LOW);}
 
 
   get_detector_name(detector_name);  
@@ -148,12 +148,22 @@ void loop()
    // }
     
 
+
+
+   //if (digitalRead(6) == HIGH && jack_on == 0 && MASTER == 0){
+   //   countpin6++;
+   //   jack_on = 1;
+   // } else {
+   //   jack_on = 0;
+   //  }
+    
+    
     
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
       
       // If Master, send a signal to the Slave
       if (MASTER == 1) {
-          digitalWrite(6, HIGH);
+          //digitalWrite(6, HIGH);
           count++;
           keep_pulse = 1;}
 
