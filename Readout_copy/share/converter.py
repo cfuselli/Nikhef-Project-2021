@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 class Converter():
     """ convert ADC to mV using calibration data extracted by polynomial fit """
     
-    def __init__(self, rfile = 'All_Fit_Params.csv', path = '../../Calibration/data/final_calib/',\
+    def __init__(self, rfile = 'final_Params.csv', path = '../../Calibration/data/final_calib/',\
                 detectors = ['Carlo','Florian','BenRevival','Franko','Niels',\
                              'M', 'Noor', 'rens', 'MattiaCosmicWatch', 'Cecile','Oline',\
                              'dummy'
@@ -53,10 +53,8 @@ class Converter():
     def adc2mv(self, detector, adc):
         """ convert adc to mV using by evaluating the polynomial fit function """
         coeff = self.constants[detector]
-        #coeff = np.flip(coeff)
-        mv = np.polyval(coeff, adc)
-        #mv  = 0.
-        #for order,par in enumerate(coeff): mv+=par*np.power(adc,order)
+        
+        mv = np.exp(np.polyval(coeff, adc))
         return mv
 
 
