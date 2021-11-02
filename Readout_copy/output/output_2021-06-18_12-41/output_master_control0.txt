@@ -1,0 +1,5 @@
+# layer adc volt temp timediff time detector_muon_count detector_count detector_name
+2 227 38.83 25.20 10 2021-06-18 12:41:26.031747 0 1 CarloCosmicWatch 0.871954
+2 49 15.48 24.98 0.108754 2021-06-18 12:41:26.140501 0 2 CarloCosmicWatch 0.980708
+2 110 22.78 24.77 0.064834 2021-06-18 12:41:26.205335 0 3 CarloCosmicWatch 1.045542
+2 316 56.81 24.87 2.831281 2021-06-18 12:41:29.036616 0 4 CarloCosmicWatch 3.876823

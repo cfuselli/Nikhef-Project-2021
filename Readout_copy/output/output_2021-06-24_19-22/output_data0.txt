@@ -1,0 +1,5 @@
+# layer adc volt temp timediff time detector_muon_count detector_count detector_name
+-5 63 17.91 28.20 0.046833 2021-06-24 19:22:53.913179 4 9 Franko 8.965013
+1 49 15.48 28.31 0.085003 2021-06-24 19:22:53.998182 3 7 Florian 9.050016
+2 113 23.02 28.31 0.140241 2021-06-24 19:22:53.866346 3 4 M 8.91818
+

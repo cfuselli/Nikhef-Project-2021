@@ -1,0 +1,153 @@
+void timediff_cons1timediff_cons2()
+{
+//=========Macro generated from canvas: c1_n5/c1_n5
+//=========  (Fri Jun 25 21:34:11 2021) by ROOT version 6.22/08
+   TCanvas *c1_n5 = new TCanvas("c1_n5", "c1_n5",10,32,700,500);
+   gStyle->SetOptStat(0);
+   gStyle->SetOptTitle(0);
+   c1_n5->SetHighLightColor(2);
+   c1_n5->Range(-0.05275949,-0.006075949,0.2269873,0.03189873);
+   c1_n5->SetFillColor(0);
+   c1_n5->SetBorderMode(0);
+   c1_n5->SetBorderSize(2);
+   c1_n5->SetTickx(1);
+   c1_n5->SetTicky(1);
+   c1_n5->SetLeftMargin(0.16);
+   c1_n5->SetRightMargin(0.05);
+   c1_n5->SetTopMargin(0.05);
+   c1_n5->SetBottomMargin(0.16);
+   c1_n5->SetFrameBorderMode(0);
+   c1_n5->SetFrameBorderMode(0);
+   
+   TH1F *timediff_cons1__7 = new TH1F("timediff_cons1__7","timediff_cons1 ",100,-1.1,0.2);
+   timediff_cons1__7->SetBinContent(8,0.9575532);
+   timediff_cons1__7->SetBinContent(85,0.02549143);
+   timediff_cons1__7->SetBinContent(86,0.003949376);
+   timediff_cons1__7->SetBinContent(87,0.005861233);
+   timediff_cons1__7->SetBinContent(88,0.001786195);
+   timediff_cons1__7->SetBinContent(89,0.001292523);
+   timediff_cons1__7->SetBinContent(90,0.001337402);
+   timediff_cons1__7->SetBinContent(91,0.001301499);
+   timediff_cons1__7->SetBinContent(92,0.001050175);
+   timediff_cons1__7->SetBinContent(93,0.0003769859);
+   timediff_cons1__7->SetBinError(8,0.002931699);
+   timediff_cons1__7->SetBinError(85,0.0004783381);
+   timediff_cons1__7->SetBinError(86,0.0001882791);
+   timediff_cons1__7->SetBinError(87,0.0002293678);
+   timediff_cons1__7->SetBinError(88,0.00012662);
+   timediff_cons1__7->SetBinError(89,0.0001077103);
+   timediff_cons1__7->SetBinError(90,0.0001095643);
+   timediff_cons1__7->SetBinError(91,0.0001080836);
+   timediff_cons1__7->SetBinError(92,9.708872e-05);
+   timediff_cons1__7->SetBinError(93,5.817019e-05);
+   timediff_cons1__7->SetMaximum(0.03);
+   timediff_cons1__7->SetEntries(111410);
+   timediff_cons1__7->SetStats(0);
+
+   Int_t ci;      // for color index setting
+   TColor *color; // for color definition with alpha
+   ci = TColor::GetColor("#cc0000");
+   timediff_cons1__7->SetLineColor(ci);
+   timediff_cons1__7->SetLineWidth(3);
+   timediff_cons1__7->GetXaxis()->SetTitle("#font[52]{Time difference [s]}");
+   timediff_cons1__7->GetXaxis()->SetRange(85,101);
+   timediff_cons1__7->GetXaxis()->SetLabelFont(42);
+   timediff_cons1__7->GetXaxis()->SetLabelSize(0.05);
+   timediff_cons1__7->GetXaxis()->SetTitleSize(0.05);
+   timediff_cons1__7->GetXaxis()->SetTitleOffset(1.4);
+   timediff_cons1__7->GetXaxis()->SetTitleFont(42);
+   timediff_cons1__7->GetYaxis()->SetTitle("#font[52]{Entries / 0.001s}");
+   timediff_cons1__7->GetYaxis()->SetLabelFont(42);
+   timediff_cons1__7->GetYaxis()->SetLabelSize(0.05);
+   timediff_cons1__7->GetYaxis()->SetTitleSize(0.05);
+   timediff_cons1__7->GetYaxis()->SetTitleOffset(1.4);
+   timediff_cons1__7->GetYaxis()->SetTitleFont(42);
+   timediff_cons1__7->GetZaxis()->SetLabelFont(42);
+   timediff_cons1__7->GetZaxis()->SetLabelSize(0.05);
+   timediff_cons1__7->GetZaxis()->SetTitleSize(0.05);
+   timediff_cons1__7->GetZaxis()->SetTitleOffset(1);
+   timediff_cons1__7->GetZaxis()->SetTitleFont(42);
+   timediff_cons1__7->Draw("hist ");
+   
+   TH1F *timediff_cons2__8 = new TH1F("timediff_cons2__8","timediff_cons2 ",100,-1.1,0.2);
+   timediff_cons2__8->SetBinContent(8,0.9575532);
+   timediff_cons2__8->SetBinContent(85,0.002656853);
+   timediff_cons2__8->SetBinContent(86,0.001705412);
+   timediff_cons2__8->SetBinContent(87,0.02911767);
+   timediff_cons2__8->SetBinContent(88,0.003671125);
+   timediff_cons2__8->SetBinContent(89,0.001454088);
+   timediff_cons2__8->SetBinContent(90,0.001193789);
+   timediff_cons2__8->SetBinContent(91,0.001265596);
+   timediff_cons2__8->SetBinContent(92,0.001095054);
+   timediff_cons2__8->SetBinContent(93,0.0002872274);
+   timediff_cons2__8->SetBinError(8,0.002931699);
+   timediff_cons2__8->SetBinError(85,0.0001544264);
+   timediff_cons2__8->SetBinError(86,0.0001237236);
+   timediff_cons2__8->SetBinError(87,0.0005112299);
+   timediff_cons2__8->SetBinError(88,0.0001815254);
+   timediff_cons2__8->SetBinError(89,0.000114244);
+   timediff_cons2__8->SetBinError(90,0.0001035146);
+   timediff_cons2__8->SetBinError(91,0.0001065824);
+   timediff_cons2__8->SetBinError(92,9.914156e-05);
+   timediff_cons2__8->SetBinError(93,5.07751e-05);
+   timediff_cons2__8->SetMaximum(0.03);
+   timediff_cons2__8->SetEntries(111410);
+   timediff_cons2__8->SetStats(0);
+
+   ci = TColor::GetColor("#0000cc");
+   timediff_cons2__8->SetLineColor(ci);
+   timediff_cons2__8->SetLineWidth(3);
+   timediff_cons2__8->GetXaxis()->SetTitle("#font[52]{Time difference [s]}");
+   timediff_cons2__8->GetXaxis()->SetRange(85,101);
+   timediff_cons2__8->GetXaxis()->SetLabelFont(42);
+   timediff_cons2__8->GetXaxis()->SetLabelSize(0.05);
+   timediff_cons2__8->GetXaxis()->SetTitleSize(0.05);
+   timediff_cons2__8->GetXaxis()->SetTitleOffset(1.4);
+   timediff_cons2__8->GetXaxis()->SetTitleFont(42);
+   timediff_cons2__8->GetYaxis()->SetTitle("#font[52]{Entries / 0.001s}");
+   timediff_cons2__8->GetYaxis()->SetLabelFont(42);
+   timediff_cons2__8->GetYaxis()->SetLabelSize(0.05);
+   timediff_cons2__8->GetYaxis()->SetTitleSize(0.05);
+   timediff_cons2__8->GetYaxis()->SetTitleOffset(1.4);
+   timediff_cons2__8->GetYaxis()->SetTitleFont(42);
+   timediff_cons2__8->GetZaxis()->SetLabelFont(42);
+   timediff_cons2__8->GetZaxis()->SetLabelSize(0.05);
+   timediff_cons2__8->GetZaxis()->SetTitleSize(0.05);
+   timediff_cons2__8->GetZaxis()->SetTitleOffset(1);
+   timediff_cons2__8->GetZaxis()->SetTitleFont(42);
+   timediff_cons2__8->Draw("hist same");
+   
+   TLegend *leg = new TLegend(0.173913,0.3191489,0.473913,0.5291489,NULL,"brNDC");
+   leg->SetTextFont(62);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(1001);
+   TLegendEntry *entry=leg->AddEntry("timediff_cons1","timediff_cons1 ","lpf");
+   entry->SetFillStyle(1001);
+
+   ci = TColor::GetColor("#cc0000");
+   entry->SetLineColor(ci);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(3);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(1);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(62);
+   entry=leg->AddEntry("timediff_cons2","timediff_cons2 ","lpflpf");
+   entry->SetFillStyle(1001);
+
+   ci = TColor::GetColor("#0000cc");
+   entry->SetLineColor(ci);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(3);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(1);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(62);
+   leg->Draw();
+   c1_n5->Modified();
+   c1_n5->cd();
+   c1_n5->SetSelected(c1_n5);
+}
