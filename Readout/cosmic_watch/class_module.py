@@ -115,9 +115,9 @@ class Grid:
             phi = np.arange(1, 10, 2) * np.pi / 4
             Phi, Theta = np.meshgrid(phi, phi)
 
-            x = cx + np.cos(Phi) * np.sin(Theta) * dx
-            y = cy + np.sin(Phi) * np.sin(Theta) * dy
-            z = cz + np.cos(Theta) / np.sqrt(2) * dz
+            x = float(cx) + np.cos(Phi) * np.sin(Theta) * float(dx)
+            y = float(cy) + np.sin(Phi) * np.sin(Theta) * float(dy)
+            z = float(cz) + np.cos(Theta) / np.sqrt(2) * float(dz)
             return x, y, z
 
         for d in self.detectors:

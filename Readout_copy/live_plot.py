@@ -16,7 +16,7 @@ import regex as re
 import matplotlib.animation as animation
 import io
 
-from class_module import *
+from cosmic_watch.class_module import *
 
 numbers = re.compile(r'(\d+)')
 
