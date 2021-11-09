@@ -16,8 +16,8 @@ import regex as re
 import matplotlib.animation as animation
 
 
-from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
-from Readout.cosmic_watch.class_module import serial_ports
+from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
+from cosmic_watch.class_module import serial_ports
 
 numbers = re.compile(r'(\d+)')
 
@@ -49,7 +49,12 @@ for i, line in enumerate(file.readlines()):
         line = line.replace('[', '')
         line = line.replace('\n', '')
         line = line.replace(',', '')
+        line = line.replace("'", '')
         line = line.replace(']', '').split(' ')
+        
+        line = [item for item in line if item not in ['',"'"] ]
+        print(line)
+        
         pos = [float(line[2]), float(line[3]), float(line[4])]
         dim = [float(line[5]), float(line[6]), float(line[7])]
         d.pos = pos
@@ -125,16 +130,22 @@ def update():
     # let's read the lines until the next blank line
     if where != new_where:
         while line != '\n':
+            line = line.replace('[', '')
             line = line.replace('\n', '')
-            lsplit = line.split(' ')
+            line = line.replace(',', '')
+            line = line.replace("'", '')
+            line = line.replace(']', '').split(' ')
+        
+            lsplit = [item for item in line if item not in ['',"'"] ]
+            print(lsplit)
             det = 0
             # find the right detector to assign
             for d in grid.detectors:
-                if d.name == lsplit[-1]:
+                if d.name == lsplit[9]:
                     det = d
                     break
             if det == 0:
-                strin = 'Unknown detector found ' + lsplit[-1]
+                strin = 'Unknown detector found ' + lsplit[9]
                 exit(strin)
 
             # add the data to each signal

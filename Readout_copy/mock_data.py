@@ -12,8 +12,8 @@ import random
 # from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 # from cosmic_watch.class_module import serial_ports
 
-from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
-from Readout.cosmic_watch.class_module import serial_ports
+from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
+from cosmic_watch.class_module import serial_ports
 
 print(" ")
 

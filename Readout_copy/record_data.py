@@ -9,14 +9,10 @@ import schedule
 import io, glob
 
 
-# I don't know why this works on the computer of the lab but not on my MacBook (Carlo)
-# from cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
-# from cosmic_watch.class_module import serial_ports
-
 #from Readout.cosmic_watch.class_module import Grid, Detector, Signal, Stack, Muon
 #from Readout.cosmic_watch.class_module import serial_ports
 
-from class_module import * #Grid, Detector, Signal, Stack, Muon
+from cosmic_watch.class_module import * #Grid, Detector, Signal, Stack, Muon
 print(" ")
 
 stack = Stack(2)
@@ -24,7 +20,7 @@ stack = Stack(2)
 # read config from setup.ini (READ README.md)
 config = configparser.ConfigParser(allow_no_value=True)
 config.optionxform = str
-config.read('setup_angle.ini', encoding='utf-8')
+config.read('setup_final.ini', encoding='utf-8')
 config_detectors = list(config.items(section='DETECTORS'))
 
 
@@ -167,7 +163,7 @@ while True:
             if signal_control_count % signals_per_control_file == 0:
                 control_file_number += 1
                 control_file = io.open(folder_name + '/output_master_control%i.txt' % control_file_number, mode="w", encoding="utf-8")
-                control_file.write(header)
+                #control_file.write(header)
 
             # if last signal is close in time, then maybe it's a muon
             # we do not want a muon to pass two times in the same layer
@@ -187,7 +183,7 @@ while True:
                     muon_count += 1
                     print('-- %i Muon(s) detected --' % muon_count)
                     muon.print()
-                    #muon.write(file)
+                    muon.write(file)
 
                     if muon_count % signals_per_file == 0:
                         file_number += 1
